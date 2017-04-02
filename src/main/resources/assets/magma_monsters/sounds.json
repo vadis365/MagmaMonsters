@@ -1,0 +1,20 @@
+{
+  "magma_monster_living": {
+    "category": "hostile",
+    "sounds": [
+      "magma_monsters:magma_monster_living"
+    ]
+  },
+  "magma_monster_hurt": {
+    "category": "hostile",
+    "sounds": [
+      "magma_monsters:magma_monster_hurt"
+    ]
+  },
+  "magma_monster_death": {
+    "category": "hostile",
+    "sounds": [
+      "magma_monsters:magma_monster_death"
+    ]
+  }
+}

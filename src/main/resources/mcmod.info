@@ -1,0 +1,20 @@
+[
+{
+  "modid": "magma_monsters",
+  "name": "magma_monsters",
+  "description": "A mod that adds a Magma Monster.",
+  "version": "0.1.14",
+  "url": "",
+  "updateUrl": "",
+  "authorList": [
+    "vadis365, Kashdeya"
+  ],
+  "credits": "Thanks to Shin00w for creepy sounds.",
+  "logoFile": "",
+  "screenshots": [
+  ],
+  "parent":"",
+  "dependencies": [
+  ]
+}
+]
