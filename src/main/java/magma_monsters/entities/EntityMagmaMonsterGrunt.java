@@ -209,7 +209,6 @@ public class EntityMagmaMonsterGrunt extends EntityMob {
 		        worldObj.playSound((EntityPlayer)null, getPosition(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.HOSTILE, 1F, 2.6F + (worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.8F);
 		        changeParticles(this, (float)posX, (float)posY + 0.45F, (float)posZ, (byte) 0);
 				setMolten(false);
-				tasks.removeTask(aiFireballAttack);
 				getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(10D);
 			}
 
@@ -217,7 +216,6 @@ public class EntityMagmaMonsterGrunt extends EntityMob {
 		        worldObj.playSound((EntityPlayer)null, getPosition(), SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.HOSTILE, 1F, 0.6F + (worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.8F);
 		        changeParticles(this, (float)posX, (float)posY + 0.45F, (float)posZ, (byte) 1);
 				setMolten(true);
-				tasks.addTask(0, aiFireballAttack);
 				getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(0D);
 			}
 
@@ -288,7 +286,7 @@ public class EntityMagmaMonsterGrunt extends EntityMob {
 		@Override
 		public boolean shouldExecute() {
 			EntityLivingBase entitylivingbase = magma_monster.getAttackTarget();
-			return entitylivingbase != null && entitylivingbase.isEntityAlive();
+			return entitylivingbase != null && entitylivingbase.isEntityAlive() && magma_monster.getMolten();
 		}
 
 		@Override

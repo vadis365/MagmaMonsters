@@ -30,7 +30,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid = "magma_monsters", name = "magma_monsters", version = "0.1.14", guiFactory = "magma_monsters.configs.ConfigGuiFactory")
+@Mod(modid = "magma_monsters", name = "magma_monsters", version = "0.1.15", guiFactory = "magma_monsters.configs.ConfigGuiFactory")
 
 public class MagmaMonsters {
 
