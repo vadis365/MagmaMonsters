@@ -127,11 +127,11 @@ public class EntityMagmaMonsterGrunt extends EntityMob {
 
 	@Override
     public boolean isNotColliding() {
-        return worldObj.checkNoEntityCollision(getEntityBoundingBox()) && worldObj.getCollisionBoxes(this, getEntityBoundingBox()).isEmpty();
+        return getEntityWorld().checkNoEntityCollision(getEntityBoundingBox()) && getEntityWorld().getCollisionBoxes(this, getEntityBoundingBox()).isEmpty();
     }
 
 	public boolean getCanSpawnInLava() {
-		return worldObj.getBlockState(new BlockPos(posX, getEntityBoundingBox().minY, posZ)).getMaterial() == Material.LAVA;
+		return getEntityWorld().getBlockState(new BlockPos(posX, getEntityBoundingBox().minY, posZ)).getMaterial() == Material.LAVA;
 	}
 
 	@Override
@@ -172,10 +172,10 @@ public class EntityMagmaMonsterGrunt extends EntityMob {
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
-		if (worldObj.isRemote && worldObj.getWorldTime() % 10 == 0 && getMolten())
-			lavaParticles(worldObj, posX, posY + 0.75D, posZ, rand);
+		if (getEntityWorld().isRemote && getEntityWorld().getWorldTime() % 10 == 0 && getMolten())
+			lavaParticles(getEntityWorld(), posX, posY + 0.75D, posZ, rand);
 
-		if (!worldObj.isRemote) {
+		if (!getEntityWorld().isRemote) {
 			if (getMolten() && getMoltenTimer() < 50)
 				setMoltenTimer(getMoltenTimer() + 1);
 			
@@ -186,11 +186,11 @@ public class EntityMagmaMonsterGrunt extends EntityMob {
 
 	@SideOnly(Side.CLIENT)
 	public void lavaParticles(World world, double x, double y, double z, Random rand) {
-		MagmaMonsters.PROXY.spawnCustomParticle("lava", worldObj, x, y, z, 0F, 0F, 0F);
+		MagmaMonsters.PROXY.spawnCustomParticle("lava", getEntityWorld(), x, y, z, 0F, 0F, 0F);
 	}
 
 	public void changeParticles(Entity entity, float x, float y, float z, byte type) {
-		Iterator<EntityPlayer> players = entity.worldObj.playerEntities.iterator();
+		Iterator<EntityPlayer> players = entity.getEntityWorld().playerEntities.iterator();
 		while (players.hasNext()) {
 			EntityPlayer playersNear = players.next();
 			if ((playersNear).getDistanceSqToEntity(entity) < 1024.0D) {
@@ -203,33 +203,33 @@ public class EntityMagmaMonsterGrunt extends EntityMob {
 	public void onLivingUpdate() {
 		super.onLivingUpdate();
 
-		if (!worldObj.isRemote) {
+		if (!getEntityWorld().isRemote) {
 
 			if (isWet() && !isInLava() && getMolten()) {
-		        worldObj.playSound((EntityPlayer)null, getPosition(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.HOSTILE, 1F, 2.6F + (worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.8F);
+		        getEntityWorld().playSound((EntityPlayer)null, getPosition(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.HOSTILE, 1F, 2.6F + (getEntityWorld().rand.nextFloat() - getEntityWorld().rand.nextFloat()) * 0.8F);
 		        changeParticles(this, (float)posX, (float)posY + 0.45F, (float)posZ, (byte) 0);
 				setMolten(false);
 				getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(10D);
 			}
 
 			if (isInLava() && !getMolten()) {
-		        worldObj.playSound((EntityPlayer)null, getPosition(), SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.HOSTILE, 1F, 0.6F + (worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.8F);
+		        getEntityWorld().playSound((EntityPlayer)null, getPosition(), SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.HOSTILE, 1F, 0.6F + (getEntityWorld().rand.nextFloat() - getEntityWorld().rand.nextFloat()) * 0.8F);
 		        changeParticles(this, (float)posX, (float)posY + 0.45F, (float)posZ, (byte) 1);
 				setMolten(true);
 				getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(0D);
 			}
 
 			if (rand.nextInt(40) == 0 && ConfigHandler.MAGMA_GRUNT_BLOCK_FIRE && getMolten()) {
-				int i = MathHelper.floor_double(posX);
-				int j = MathHelper.floor_double(posY);
-				int k = MathHelper.floor_double(posZ);
+				int i = MathHelper.floor(posX);
+				int j = MathHelper.floor(posY);
+				int k = MathHelper.floor(posZ);
 				for (int l = 0; l < 4; ++l) {
-					i = MathHelper.floor_double(posX + (double) ((float) (l % 2 * 2 - 1) * 0.25F));
-					j = MathHelper.floor_double(posY);
-					k = MathHelper.floor_double(posZ + (double) ((float) (l / 2 % 2 * 2 - 1) * 0.25F));
+					i = MathHelper.floor(posX + (double) ((float) (l % 2 * 2 - 1) * 0.25F));
+					j = MathHelper.floor(posY);
+					k = MathHelper.floor(posZ + (double) ((float) (l / 2 % 2 * 2 - 1) * 0.25F));
 					BlockPos blockpos = new BlockPos(i, j, k);
-					if (worldObj.getBlockState(blockpos).getMaterial() == Material.AIR && Blocks.FIRE.canPlaceBlockAt(worldObj, blockpos))
-						worldObj.setBlockState(blockpos, Blocks.FIRE.getDefaultState());
+					if (getEntityWorld().getBlockState(blockpos).getMaterial() == Material.AIR && Blocks.FIRE.canPlaceBlockAt(getEntityWorld(), blockpos))
+						getEntityWorld().setBlockState(blockpos, Blocks.FIRE.getDefaultState());
 				}
 			}
 		}
@@ -255,7 +255,7 @@ public class EntityMagmaMonsterGrunt extends EntityMob {
 	@Override
 	public boolean attackEntityFrom(DamageSource source, float damage) {
 		if (source instanceof EntityDamageSourceIndirect && !getMolten()) {
-			worldObj.playSound((EntityPlayer) null, posX, posY, posZ, SoundEvents.BLOCK_STONE_BUTTON_CLICK_OFF, SoundCategory.HOSTILE, 2.5F, 3F);
+			getEntityWorld().playSound((EntityPlayer) null, posX, posY, posZ, SoundEvents.BLOCK_STONE_BUTTON_CLICK_OFF, SoundCategory.HOSTILE, 2.5F, 3F);
 			return false;
 		}
 		return super.attackEntityFrom(source, damage);
@@ -320,11 +320,11 @@ public class EntityMagmaMonsterGrunt extends EntityMob {
 						attackStep = 0;
 					}
 					if (attackStep == 1) {
-						float f = MathHelper.sqrt_float(MathHelper.sqrt_double(d0)) * 0.5F;
-						magma_monster.worldObj.playEvent((EntityPlayer) null, 1018, new BlockPos((int) magma_monster.posX, (int) magma_monster.posY, (int) magma_monster.posZ), 0);
-						EntitySmallFireball entitysmallfireball = new EntitySmallFireball(magma_monster.worldObj, magma_monster, d1 + magma_monster.getRNG().nextGaussian() * (double) f, d2, d3 + magma_monster.getRNG().nextGaussian() * (double) f);
+						float f = MathHelper.sqrt(MathHelper.sqrt(d0)) * 0.5F;
+						magma_monster.getEntityWorld().playEvent((EntityPlayer) null, 1018, new BlockPos((int) magma_monster.posX, (int) magma_monster.posY, (int) magma_monster.posZ), 0);
+						EntitySmallFireball entitysmallfireball = new EntitySmallFireball(magma_monster.getEntityWorld(), magma_monster, d1 + magma_monster.getRNG().nextGaussian() * (double) f, d2, d3 + magma_monster.getRNG().nextGaussian() * (double) f);
 						entitysmallfireball.posY = magma_monster.posY + (double) (magma_monster.height / 2.0F) + 0.5D;
-						magma_monster.worldObj.spawnEntityInWorld(entitysmallfireball);
+						magma_monster.getEntityWorld().spawnEntity(entitysmallfireball);
 					}
 				}
 				magma_monster.getLookHelper().setLookPositionWithEntity(entitylivingbase, 10.0F, 10.0F);

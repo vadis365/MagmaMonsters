@@ -6,8 +6,6 @@ import magma_monsters.entities.EntityMagmaMonsterGrunt;
 import magma_monsters.network.QuenchMessage;
 import magma_monsters.network.QuenchPacketHandler;
 import magma_monsters.proxy.CommonProxy;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.EnumCreatureType;
@@ -30,11 +28,9 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid = "magma_monsters", name = "magma_monsters", version = "0.1.15", guiFactory = "magma_monsters.configs.ConfigGuiFactory")
+@Mod(modid = "magma_monsters", name = "magma_monsters", version = "0.2.0", guiFactory = "magma_monsters.configs.ConfigGuiFactory")
 
 public class MagmaMonsters {
-
-	static int startEntityId = 1;
 
 	@Instance("magma_monsters")
 	public static MagmaMonsters INSTANCE;
@@ -46,24 +42,22 @@ public class MagmaMonsters {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		ConfigHandler.INSTANCE.loadConfig(event);
-		EntityRegistry.registerModEntity(EntityMagmaMonster.class, "MagmaMonster", 1, this, 120, 1, true);
+		EntityRegistry.registerModEntity(getEntityResource("magma_monster"), EntityMagmaMonster.class, "magma_monster", 1, this, 120, 1, true, 0xFF0000, 0x06B900);
 		EntitySpawnPlacementRegistry.setPlacementType(EntityMagmaMonster.class, SpawnPlacementType.IN_WATER);
-		registerEntityEgg(EntityMagmaMonster.class, 0xFF0000, 0x06B900);
 		
-		EntityRegistry.registerModEntity(EntityMagmaMonsterGrunt.class, "MagmaMonsterGrunt", 2, this, 120, 1, true);
+		EntityRegistry.registerModEntity(getEntityResource("magma_monster_grunt"), EntityMagmaMonsterGrunt.class, "magma_monster_grunt", 2, this, 120, 1, true, 0xFF0000, 0x06B900);
 		EntitySpawnPlacementRegistry.setPlacementType(EntityMagmaMonsterGrunt.class, SpawnPlacementType.IN_WATER);
-		registerEntityEgg(EntityMagmaMonsterGrunt.class, 0xFF0000, 0x06B900);
 
 		PROXY.registerRenderers();
 
 		for (Biome allBiomes : ForgeRegistries.BIOMES.getValues()) {
-			if (!BiomeDictionary.isBiomeOfType(allBiomes, Type.NETHER) && !BiomeDictionary.isBiomeOfType(allBiomes, Type.END)) {
+			if (!BiomeDictionary.hasType(allBiomes, Type.NETHER) && !BiomeDictionary.hasType(allBiomes, Type.END)) {
 				if(ConfigHandler.MAGMA_OW_SPAWN)
 					EntityRegistry.addSpawn(EntityMagmaMonster.class, ConfigHandler.MAGMA_OW_SPAWN_PROBABILITY, ConfigHandler.MAGMA_OW_MIN_SPAWN_SIZE, ConfigHandler.MAGMA_OW_MAX_SPAWN_SIZE, EnumCreatureType.MONSTER, allBiomes);
 				if(ConfigHandler.MAGMA_GRUNT_OW_SPAWN)
 					EntityRegistry.addSpawn(EntityMagmaMonsterGrunt.class, ConfigHandler.MAGMA_GRUNT_OW_SPAWN_PROBABILITY, ConfigHandler.MAGMA_GRUNT_OW_MIN_SPAWN_SIZE, ConfigHandler.MAGMA_GRUNT_OW_MAX_SPAWN_SIZE, EnumCreatureType.MONSTER, allBiomes);
 			}
-			if (BiomeDictionary.isBiomeOfType(allBiomes, Type.NETHER)) {
+			if (BiomeDictionary.hasType(allBiomes, Type.NETHER)) {
 				if(ConfigHandler.MAGMA_HELL_SPAWN)
 					EntityRegistry.addSpawn(EntityMagmaMonster.class, ConfigHandler.MAGMA_HELL_SPAWN_PROBABILITY, ConfigHandler.MAGMA_HELL_MIN_SPAWN_SIZE, ConfigHandler.MAGMA_HELL_MAX_SPAWN_SIZE, EnumCreatureType.MONSTER, allBiomes);
 				if(ConfigHandler.MAGMA_GRUNT_HELL_SPAWN)
@@ -72,17 +66,8 @@ public class MagmaMonsters {
 		}
 	}
 
-	public static int getUniqueEntityId() {
-		do
-			startEntityId++;
-		while (EntityList.getClassFromID(startEntityId) != null);
-		return startEntityId;
-	}
-
-	public static void registerEntityEgg(Class<? extends Entity> entity, int primaryColor, int secondaryColor) {
-		int id = getUniqueEntityId();
-		EntityList.addMapping(entity, entity.getName(), id);
-		EntityList.ENTITY_EGGS.put(entity.getName(), new EntityList.EntityEggInfo(entity.getName(), primaryColor, secondaryColor));
+	private static ResourceLocation getEntityResource(String entityName) {
+		return new ResourceLocation("magma_monsters", entityName);
 	}
 
 	@EventHandler
