@@ -43,10 +43,10 @@ public class MagmaMonsters {
 	public void preInit(FMLPreInitializationEvent event) {
 		ConfigHandler.INSTANCE.loadConfig(event);
 		EntityRegistry.registerModEntity(getEntityResource("magma_monster"), EntityMagmaMonster.class, "magma_monster", 1, this, 120, 1, true, 0xFF0000, 0x06B900);
-		EntitySpawnPlacementRegistry.setPlacementType(EntityMagmaMonster.class, SpawnPlacementType.IN_WATER);
+		EntitySpawnPlacementRegistry.setPlacementType(EntityMagmaMonster.class, SpawnPlacementType.ON_GROUND);
 		
 		EntityRegistry.registerModEntity(getEntityResource("magma_monster_grunt"), EntityMagmaMonsterGrunt.class, "magma_monster_grunt", 2, this, 120, 1, true, 0xFF0000, 0x06B900);
-		EntitySpawnPlacementRegistry.setPlacementType(EntityMagmaMonsterGrunt.class, SpawnPlacementType.IN_WATER);
+		EntitySpawnPlacementRegistry.setPlacementType(EntityMagmaMonsterGrunt.class, SpawnPlacementType.ON_GROUND);
 
 		PROXY.registerRenderers();
 

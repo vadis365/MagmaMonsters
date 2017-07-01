@@ -7,6 +7,7 @@ import magma_monsters.MagmaMonsters;
 import magma_monsters.configs.ConfigHandler;
 import magma_monsters.network.QuenchMessage;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -39,6 +40,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -119,20 +121,35 @@ public class EntityMagmaMonster extends EntityMob {
 		getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(32.0D);
 		getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue((double)ConfigHandler.MAGMA_HEALTH);
 	}
-
+	
 	@Override
 	public boolean getCanSpawnHere() {
-		return getCanSpawnInLava() && posY <= ConfigHandler.MAGMA_SPAWN_Y_HEIGHT;
+		return getCanSpawnNearLava() && posY <= ConfigHandler.MAGMA_SPAWN_Y_HEIGHT;
 	}
-	
+
+	public boolean getCanSpawnNearLava() {
+		AxisAlignedBB axisalignedbb = getEntityBoundingBox().expand(5.0D, 5.0D, 5.0D);
+		int n = MathHelper.floor(axisalignedbb.minX);
+		int o = MathHelper.floor(axisalignedbb.maxX + 1.0D);
+		int p = MathHelper.floor(axisalignedbb.minY);
+		int q = MathHelper.floor(axisalignedbb.maxY + 1.0D);
+		int n1 = MathHelper.floor(axisalignedbb.minZ);
+		int o1 = MathHelper.floor(axisalignedbb.maxZ + 1.0D);
+		for (int p1 = n; p1 < o; p1++)
+			for (int q1 = p; q1 < q; q1++)
+				for (int n2 = n1; n2 < o1; n2++) {
+					IBlockState o2 = getEntityWorld().getBlockState(new BlockPos(p1, q1, n2));
+					if (!this.getEntityWorld().isAirBlock(new BlockPos(p1, q1, n2)))
+						if (o2.getMaterial() == Material.LAVA)
+							return true;
+				}
+		return false;
+	}
+
 	@Override
     public boolean isNotColliding() {
         return getEntityWorld().checkNoEntityCollision(getEntityBoundingBox()) && getEntityWorld().getCollisionBoxes(this, getEntityBoundingBox()).isEmpty();
     }
-
-	public boolean getCanSpawnInLava() {
-		return getEntityWorld().getBlockState(new BlockPos(posX, getEntityBoundingBox().minY, posZ)).getMaterial() == Material.LAVA;
-	}
 
 	@Override
 	protected SoundEvent getAmbientSound() {

@@ -26,7 +26,6 @@ archivesBaseName = "MagmaMonsters"
 sourceCompatibility = targetCompatibility = '1.8'
 
 minecraft {
-    version = "1.11.2-13.20.0.2296"
     runDir = "run"
     
     // the mappings can be changed at any time, and must be in the following format.
