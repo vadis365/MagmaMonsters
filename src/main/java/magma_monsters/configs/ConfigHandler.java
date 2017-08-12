@@ -55,12 +55,12 @@ public class ConfigHandler {
 		MAGMA_OW_SPAWN = CONFIG.get("Magma Monster Spawn Settings", "Spawn Over World Magma Monsters", true).getBoolean(true);
 		MAGMA_OW_MIN_SPAWN_SIZE = CONFIG.get("Magma Monster Spawn Settings", "Over World Magma Monster Group Minimum Size", 1).getInt(1);
 		MAGMA_OW_MAX_SPAWN_SIZE = CONFIG.get("Magma Monster Spawn Settings", "Over World Magma Monster Group Maximum Size", 3).getInt(3);
-		MAGMA_OW_SPAWN_PROBABILITY = CONFIG.get("Magma Monster Spawn Settings", "Over World Magma Monster Chance Probability", 200).getInt(200);
+		MAGMA_OW_SPAWN_PROBABILITY = CONFIG.get("Magma Monster Spawn Settings", "Over World Magma Monster Chance Probability", 2000).getInt(2000);
 
 		MAGMA_HELL_SPAWN = CONFIG.get("Magma Monster Spawn Settings", "Spawn Nether Magma Monsters", true).getBoolean(true);
 		MAGMA_HELL_MIN_SPAWN_SIZE = CONFIG.get("Magma Monster Spawn Settings", "Nether Magma Monster Group Minimum Size", 1).getInt(1);
 		MAGMA_HELL_MAX_SPAWN_SIZE = CONFIG.get("Magma Monster Spawn Settings", "Nether Magma Monster Group Maximum Size", 3).getInt(3);
-		MAGMA_HELL_SPAWN_PROBABILITY = CONFIG.get("Magma Monster Spawn Settings", "Nether Magma Monster Chance Probability", 200).getInt(200);
+		MAGMA_HELL_SPAWN_PROBABILITY = CONFIG.get("Magma Monster Spawn Settings", "Nether Magma Monster Chance Probability", 2000).getInt(2000);
 
 		MAGMA_SPAWN_Y_HEIGHT = CONFIG.get("Magma Monster Spawn Settings", "Magma Monster Max Y Spawn Height", 63).getInt(63);
 		MAGMA_BLOCK_FIRE = CONFIG.get("Magma Monster Spawn Settings", "Spawn Fire Whilst On Flamable Blocks", true).getBoolean(true);
@@ -72,12 +72,12 @@ public class ConfigHandler {
 		MAGMA_GRUNT_OW_SPAWN = CONFIG.get("Magma Monster Grunt Spawn Settings", "Spawn Over World Magma Monster Grunts", true).getBoolean(true);
 		MAGMA_GRUNT_OW_MIN_SPAWN_SIZE = CONFIG.get("Magma Monster Grunt Spawn Settings", "Over World Magma Monster Grunt Group Minimum Size", 1).getInt(1);
 		MAGMA_GRUNT_OW_MAX_SPAWN_SIZE = CONFIG.get("Magma Monster Grunt Spawn Settings", "Over World Magma Monster Grunt Group Maximum Size", 3).getInt(3);
-		MAGMA_GRUNT_OW_SPAWN_PROBABILITY = CONFIG.get("Magma Monster Grunt Spawn Settings", "Over World Magma Monster Grunt Chance Probability", 200).getInt(200);
+		MAGMA_GRUNT_OW_SPAWN_PROBABILITY = CONFIG.get("Magma Monster Grunt Spawn Settings", "Over World Magma Monster Grunt Chance Probability", 2000).getInt(2000);
 
 		MAGMA_GRUNT_HELL_SPAWN = CONFIG.get("Magma Monster Grunt Spawn Settings", "Spawn Nether Magma Monster Grunts", true).getBoolean(true);
 		MAGMA_GRUNT_HELL_MIN_SPAWN_SIZE = CONFIG.get("Magma Monster Grunt Spawn Settings", "Nether Magma Monster Grunt Group Minimum Size", 1).getInt(1);
 		MAGMA_GRUNT_HELL_MAX_SPAWN_SIZE = CONFIG.get("Magma Monster Grunt Spawn Settings", "Nether Magma Monster Grunt Group Maximum Size", 3).getInt(3);
-		MAGMA_GRUNT_HELL_SPAWN_PROBABILITY = CONFIG.get("Magma Monster Grunt Spawn Settings", "Nether Magma Monster Grunt Chance Probability", 200).getInt(200);
+		MAGMA_GRUNT_HELL_SPAWN_PROBABILITY = CONFIG.get("Magma Monster Grunt Spawn Settings", "Nether Magma Monster Grunt Chance Probability", 2000).getInt(2000);
 
 		MAGMA_GRUNT_SPAWN_Y_HEIGHT = CONFIG.get("Magma Monster Grunt Spawn Settings", "Magma Monster Grunt Max Y Spawn Height", 63).getInt(63);
 		MAGMA_GRUNT_BLOCK_FIRE = CONFIG.get("Magma Monster Grunt Spawn Settings", "Grunts Spawn Fire Whilst On Flamable Blocks", true).getBoolean(true);
