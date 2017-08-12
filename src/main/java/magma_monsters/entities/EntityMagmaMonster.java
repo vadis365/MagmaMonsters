@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 import magma_monsters.MagmaMonsters;
+import magma_monsters.ModSounds;
 import magma_monsters.configs.ConfigHandler;
 import magma_monsters.network.QuenchMessage;
 import net.minecraft.block.material.Material;
@@ -153,17 +154,17 @@ public class EntityMagmaMonster extends EntityMob {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return MagmaMonsters.MAGMA_MONSTER_LIVING;
+		return ModSounds.MAGMA_MONSTER_LIVING;
 	}
 
 	@Override
-	protected SoundEvent getHurtSound() {
-		return MagmaMonsters.MAGMA_MONSTER_HURT;
+	protected SoundEvent getHurtSound(DamageSource source) {
+		return ModSounds.MAGMA_MONSTER_HURT;
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return MagmaMonsters.MAGMA_MONSTER_DEATH;
+		return ModSounds.MAGMA_MONSTER_DEATH;
 	}
 
 	@Override

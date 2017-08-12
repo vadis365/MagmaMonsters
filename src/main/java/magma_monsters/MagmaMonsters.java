@@ -10,7 +10,6 @@ import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
@@ -25,10 +24,9 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid = "magma_monsters", name = "magma_monsters", version = "0.2.0", guiFactory = "magma_monsters.configs.ConfigGuiFactory")
+@Mod(modid = "magma_monsters", name = "magma_monsters", version = "0.3.0", guiFactory = "magma_monsters.configs.ConfigGuiFactory")
 
 public class MagmaMonsters {
 
@@ -37,7 +35,6 @@ public class MagmaMonsters {
 
 	@SidedProxy(clientSide = "magma_monsters.proxy.ClientProxy", serverSide = "magma_monsters.proxy.CommonProxy")
 	public static CommonProxy PROXY;
-	public static SoundEvent MAGMA_MONSTER_LIVING, MAGMA_MONSTER_HURT, MAGMA_MONSTER_DEATH;
 	public static SimpleNetworkWrapper NETWORK_WRAPPER;
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -72,12 +69,6 @@ public class MagmaMonsters {
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
-		MAGMA_MONSTER_LIVING = new SoundEvent(new ResourceLocation("magma_monsters", "magma_monster_living")).setRegistryName("magma_monsters", "magma_monster_living");
-		GameRegistry.register(MAGMA_MONSTER_LIVING);
-		MAGMA_MONSTER_HURT = new SoundEvent(new ResourceLocation("magma_monsters", "magma_monster_hurt")).setRegistryName("magma_monsters", "magma_monster_hurt");
-		GameRegistry.register(MAGMA_MONSTER_HURT);
-		MAGMA_MONSTER_DEATH = new SoundEvent(new ResourceLocation("magma_monsters", "magma_monster_death")).setRegistryName("magma_monsters", "magma_monster_death");
-		GameRegistry.register(MAGMA_MONSTER_DEATH);
 		MinecraftForge.EVENT_BUS.register(ConfigHandler.INSTANCE);
 		NETWORK_WRAPPER = NetworkRegistry.INSTANCE.newSimpleChannel("magma_monsters");
 		NETWORK_WRAPPER.registerMessage(QuenchPacketHandler.class, QuenchMessage.class, 0, Side.CLIENT);
