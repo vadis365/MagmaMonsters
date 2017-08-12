@@ -39,6 +39,7 @@ public class MagmaMonsters {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		ConfigHandler.INSTANCE.loadConfig(event);
+		ModSounds.init();
 		EntityRegistry.registerModEntity(getEntityResource("magma_monster"), EntityMagmaMonster.class, "magma_monster", 1, this, 120, 1, true, 0xFF0000, 0x06B900);
 		EntitySpawnPlacementRegistry.setPlacementType(EntityMagmaMonster.class, SpawnPlacementType.ON_GROUND);
 		
