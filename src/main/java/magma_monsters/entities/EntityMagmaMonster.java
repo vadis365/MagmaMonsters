@@ -206,7 +206,7 @@ public class EntityMagmaMonster extends EntityMob {
 		Iterator<EntityPlayer> players = entity.getEntityWorld().playerEntities.iterator();
 		while (players.hasNext()) {
 			EntityPlayer playersNear = players.next();
-			if ((playersNear).getDistanceSqToEntity(entity) < 1024.0D) {
+			if ((playersNear).getDistanceSq(entity) < 1024.0D) {
 				MagmaMonsters.NETWORK_WRAPPER.sendTo(new QuenchMessage(x, y, z, type), (EntityPlayerMP) playersNear);
 			}
 		}
@@ -311,7 +311,7 @@ public class EntityMagmaMonster extends EntityMob {
 		public void updateTask() {
 			--attackTime;
 			EntityLivingBase entitylivingbase = magma_monster.getAttackTarget();
-			double d0 = magma_monster.getDistanceSqToEntity(entitylivingbase);
+			double d0 = magma_monster.getDistanceSq(entitylivingbase);
 
 			if (d0 < 4.0D) {
 				if (attackTime <= 0) {
@@ -351,7 +351,7 @@ public class EntityMagmaMonster extends EntityMob {
 				}
 
 				magma_monster.getLookHelper().setLookPositionWithEntity(entitylivingbase, 10.0F, 10.0F);
-				magma_monster.getNavigator().clearPathEntity();
+				magma_monster.getNavigator().clearPath();
 				magma_monster.getMoveHelper().setMoveTo(entitylivingbase.posX, entitylivingbase.posY, entitylivingbase.posZ, 1.0D);
 			}
 
