@@ -52,6 +52,7 @@ public class LayerMagmaMonster implements LayerRenderer<EntityMagmaMonster> {
 			GlStateManager.matrixMode(5890);
 			GlStateManager.loadIdentity();
 			GlStateManager.matrixMode(5888);
+			GlStateManager.enableLighting();
 			GlStateManager.depthMask(true);
 			GlStateManager.disableBlend();
 			GlStateManager.popMatrix();
