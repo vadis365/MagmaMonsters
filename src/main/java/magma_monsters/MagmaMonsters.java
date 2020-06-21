@@ -1,77 +1,71 @@
 package magma_monsters;
 
-import magma_monsters.configs.ConfigHandler;
-import magma_monsters.entities.EntityMagmaMonster;
-import magma_monsters.entities.EntityMagmaMonsterGrunt;
+import java.nio.file.Path;
+
+import magma_monsters.client.render.RenderMagmaMonster;
+import magma_monsters.client.render.RenderMagmaMonsterGrunt;
+import magma_monsters.configs.Config;
 import magma_monsters.network.QuenchMessage;
-import magma_monsters.network.QuenchPacketHandler;
-import magma_monsters.proxy.CommonProxy;
-import net.minecraft.entity.EntityLiving.SpawnPlacementType;
-import net.minecraft.entity.EntitySpawnPlacementRegistry;
-import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.Mod.Instance;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 
-@Mod(modid = "magma_monsters", name = "magma_monsters", version = "0.3.0", guiFactory = "magma_monsters.configs.ConfigGuiFactory")
-
+@Mod(Reference.MOD_ID)
 public class MagmaMonsters {
 
-	@Instance("magma_monsters")
-	public static MagmaMonsters INSTANCE;
+	 public static SimpleChannel NETWORK_WRAPPER;
 
-	@SidedProxy(clientSide = "magma_monsters.proxy.ClientProxy", serverSide = "magma_monsters.proxy.CommonProxy")
-	public static CommonProxy PROXY;
-	public static SimpleNetworkWrapper NETWORK_WRAPPER;
-	@EventHandler
-	public void preInit(FMLPreInitializationEvent event) {
-		ConfigHandler.INSTANCE.loadConfig(event);
-		ModSounds.init();
-		EntityRegistry.registerModEntity(getEntityResource("magma_monster"), EntityMagmaMonster.class, "magma_monster", 1, this, 120, 1, true, 0xFF0000, 0x06B900);
-		EntitySpawnPlacementRegistry.setPlacementType(EntityMagmaMonster.class, SpawnPlacementType.ON_GROUND);
-		
-		EntityRegistry.registerModEntity(getEntityResource("magma_monster_grunt"), EntityMagmaMonsterGrunt.class, "magma_monster_grunt", 2, this, 120, 1, true, 0xFF0000, 0x06B900);
-		EntitySpawnPlacementRegistry.setPlacementType(EntityMagmaMonsterGrunt.class, SpawnPlacementType.ON_GROUND);
+	public MagmaMonsters () {
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+		MinecraftForge.EVENT_BUS.register(this);
 
-		PROXY.registerRenderers();
-
-		for (Biome allBiomes : ForgeRegistries.BIOMES.getValues()) {
-			if (!BiomeDictionary.hasType(allBiomes, Type.NETHER) && !BiomeDictionary.hasType(allBiomes, Type.END)) {
-				if(ConfigHandler.MAGMA_OW_SPAWN)
-					EntityRegistry.addSpawn(EntityMagmaMonster.class, ConfigHandler.MAGMA_OW_SPAWN_PROBABILITY, ConfigHandler.MAGMA_OW_MIN_SPAWN_SIZE, ConfigHandler.MAGMA_OW_MAX_SPAWN_SIZE, EnumCreatureType.MONSTER, allBiomes);
-				if(ConfigHandler.MAGMA_GRUNT_OW_SPAWN)
-					EntityRegistry.addSpawn(EntityMagmaMonsterGrunt.class, ConfigHandler.MAGMA_GRUNT_OW_SPAWN_PROBABILITY, ConfigHandler.MAGMA_GRUNT_OW_MIN_SPAWN_SIZE, ConfigHandler.MAGMA_GRUNT_OW_MAX_SPAWN_SIZE, EnumCreatureType.MONSTER, allBiomes);
-			}
-			if (BiomeDictionary.hasType(allBiomes, Type.NETHER)) {
-				if(ConfigHandler.MAGMA_HELL_SPAWN)
-					EntityRegistry.addSpawn(EntityMagmaMonster.class, ConfigHandler.MAGMA_HELL_SPAWN_PROBABILITY, ConfigHandler.MAGMA_HELL_MIN_SPAWN_SIZE, ConfigHandler.MAGMA_HELL_MAX_SPAWN_SIZE, EnumCreatureType.MONSTER, allBiomes);
-				if(ConfigHandler.MAGMA_GRUNT_HELL_SPAWN)
-					EntityRegistry.addSpawn(EntityMagmaMonsterGrunt.class, ConfigHandler.MAGMA_GRUNT_HELL_SPAWN_PROBABILITY, ConfigHandler.MAGMA_GRUNT_HELL_MIN_SPAWN_SIZE, ConfigHandler.MAGMA_GRUNT_HELL_MAX_SPAWN_SIZE, EnumCreatureType.MONSTER, allBiomes);
-			}
+		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_CONFIG);
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
+		Path path = FMLPaths.CONFIGDIR.get().resolve("magma_monsters_mod-common.toml");
+		Config.loadConfig(Config.COMMON_CONFIG, path);
+	}
+	
+	public static ItemGroup TAB = new ItemGroup(Reference.MOD_ID) {
+		@Override
+		public ItemStack createIcon() {
+			return new ItemStack (Items.MAGMA_CREAM);
 		}
+	};
+	
+	private void setup(final FMLCommonSetupEvent event) {
+		ModEntities.registerEntitySpawns();
+		//MinecraftForge.EVENT_BUS.register(new ModEvents());
+
+		NETWORK_WRAPPER = NetworkRegistry.ChannelBuilder.named(new ResourceLocation(Reference.MOD_ID, "net")).simpleChannel();
+		NETWORK_WRAPPER.registerMessage(0, QuenchMessage.class, QuenchMessage::encode, QuenchMessage::decode, QuenchMessage.Handler::handle);
 	}
 
-	private static ResourceLocation getEntityResource(String entityName) {
-		return new ResourceLocation("magma_monsters", entityName);
+	private void doClientStuff(final FMLClientSetupEvent event) {
+		RenderingRegistry.registerEntityRenderingHandler(ModEntities.MAGMA_MONSTER, RenderMagmaMonster::new);
+		RenderingRegistry.registerEntityRenderingHandler(ModEntities.MAGMA_MONSTER_GRUNT, RenderMagmaMonsterGrunt::new);
 	}
 
-	@EventHandler
-	public void init(FMLInitializationEvent event) {
-		MinecraftForge.EVENT_BUS.register(ConfigHandler.INSTANCE);
-		NETWORK_WRAPPER = NetworkRegistry.INSTANCE.newSimpleChannel("magma_monsters");
-		NETWORK_WRAPPER.registerMessage(QuenchPacketHandler.class, QuenchMessage.class, 0, Side.CLIENT);
-	}
+	private void enqueueIMC(final InterModEnqueueEvent event) {}
+
+	private void processIMC(final InterModProcessEvent event) {}
+
+	
+
 }

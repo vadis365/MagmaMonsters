@@ -1,14 +1,22 @@
 package magma_monsters.network;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import java.util.function.Supplier;
 
-public class QuenchMessage implements IMessage {
+import magma_monsters.particles.ClientParticles;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-	public float posX, posY, posZ;
-	public byte type;
-	public QuenchMessage() {
-	}
+public class QuenchMessage {
+
+	public static float posX;
+	public static float posY;
+	public static float posZ;
+	public static byte type;
 
 	public QuenchMessage(float x, float y, float z, byte particleType) {
 		posX = x;
@@ -17,20 +25,36 @@ public class QuenchMessage implements IMessage {
 		type = particleType;
 	}
 
-	@Override
-	public void toBytes(ByteBuf buf) {
+	public static void encode(QuenchMessage pkt, PacketBuffer buf) {
 		buf.writeFloat(posX);
 		buf.writeFloat(posY);
 		buf.writeFloat(posZ);
 		buf.writeByte(type);
 	}
 
-	@Override
-	public void fromBytes(ByteBuf buf) {
+	public static QuenchMessage decode(PacketBuffer buf) {
 		posX = buf.readFloat();
 		posY = buf.readFloat();
 		posZ = buf.readFloat();
 		type = buf.readByte();
+		return null;
 	}
 
+	public static class Handler {
+		@SuppressWarnings("static-access")
+		@OnlyIn(Dist.CLIENT)
+		public static void handle(final QuenchMessage pkt, Supplier<NetworkEvent.Context> ctx) {
+			World world = Minecraft.getInstance().world;
+			if (world == null)
+				return;
+			else if (world.isRemote)
+				for (int a = 0; a < 360; a += 10) {
+					double ang = a * Math.PI / 180D;
+					if (pkt.type == 0)
+						ClientParticles.spawnCustomParticle("smoke", world, pkt.posX + -MathHelper.sin((float) ang) * 0.125F, pkt.posY, pkt.posZ + MathHelper.cos((float) ang) * 0.125F, -MathHelper.sin((float) ang) * 0.1, 0.05D, MathHelper.cos((float) ang) * 0.1);
+					if (pkt.type == 1)
+						ClientParticles.spawnCustomParticle("flame", world, pkt.posX + -MathHelper.sin((float) ang) * 0.125F, pkt.posY, pkt.posZ + MathHelper.cos((float) ang) * 0.125F, -MathHelper.sin((float) ang) * 0.1, 0.05D, MathHelper.cos((float) ang) * 0.1);
+				}
+		}
+	}
 }

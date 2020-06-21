@@ -1,16 +1,18 @@
 package magma_monsters.client.model.entity;
 
-import magma_monsters.entities.EntityMagmaMonster;
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 
-@SideOnly(Side.CLIENT)
-public class ModelMagmaMonster extends ModelBase {
+import magma_monsters.entities.EntityMagmaMonster;
+import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+@OnlyIn(Dist.CLIENT)
+public class ModelMagmaMonster<T extends EntityMagmaMonster> extends EntityModel<T> {
 	public ModelRenderer torsoBottom;
 	public ModelRenderer leftLegThigh;
     public ModelRenderer rightLegThigh;
@@ -279,22 +281,22 @@ public class ModelMagmaMonster extends ModelBase {
         jaw.addChild(ltooth);
     }
 
-    @Override
-	public void render(Entity entity, float limbSwing, float limbSwingAngle, float entityTickTime, float rotationYaw, float rotationPitch, float scale) {
-        torsoBottom.render(scale);
-    }
-
 	@Override
-	public void setRotationAngles(float limbSwing, float limbSwingAngle, float entityTickTime, float rotationYaw, float rotationPitch, float unitPixel, Entity entity) {
-		super.setRotationAngles(limbSwing, limbSwingAngle, entityTickTime, rotationYaw, rotationPitch, unitPixel, entity);
-		EntityMagmaMonster magma_monster = (EntityMagmaMonster) entity;
-		float flap = MathHelper.sin((magma_monster.ticksExisted) * 0.3F) * 0.8F;
-		headMain.rotateAngleY = MathHelper.sin((rotationYaw / (180F / (float) Math.PI)) * 0.5F);
-		headMain.rotateAngleX = -0.5235987755982988F + MathHelper.sin((rotationPitch / (180F / (float) Math.PI)) * 0.5F) + flap * 0.025F;
+	public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+		ImmutableList.of(this.torsoBottom).forEach((p_228279_8_) -> {
+            p_228279_8_.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);});
 	}
 
 	@Override
-	public void setLivingAnimations(EntityLivingBase entity, float limbSwing, float limbSwingAngle, float partialRenderTicks) {
+	 public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+		EntityMagmaMonster magma_monster = (EntityMagmaMonster) entity;
+		float flap = MathHelper.sin((magma_monster.ticksExisted) * 0.3F) * 0.8F;
+		headMain.rotateAngleY = MathHelper.sin((netHeadYaw / (180F / (float) Math.PI)) * 0.5F);
+		headMain.rotateAngleX = -0.5235987755982988F + MathHelper.sin((headPitch / (180F / (float) Math.PI)) * 0.5F) + flap * 0.025F;
+	}
+
+	@Override
+	public void setLivingAnimations(T entity, float limbSwing, float limbSwingAngle, float partialRenderTicks) {
 		EntityMagmaMonster magma_monster = (EntityMagmaMonster) entity;
 		float swing = MathHelper.sin(limbSwing * 0.7F) * 1.2F * limbSwingAngle;
 		float flap = MathHelper.sin((magma_monster.ticksExisted) * 0.3F) * 0.8F;
