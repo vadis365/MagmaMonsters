@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -26,8 +27,11 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 @Mod(Reference.MOD_ID)
 public class MagmaMonsters {
-
-	 public static SimpleChannel NETWORK_WRAPPER;
+	private static final String PROTOCOL_VERSION = Integer.toString(1);
+	public static final SimpleChannel NETWORK_WRAPPER = NetworkRegistry.ChannelBuilder.named(new ResourceLocation(Reference.MOD_ID, "magma_net"))
+			.clientAcceptedVersions(PROTOCOL_VERSION::equals)
+			.serverAcceptedVersions(PROTOCOL_VERSION::equals)
+			.networkProtocolVersion(() -> PROTOCOL_VERSION).simpleChannel();
 
 	public MagmaMonsters () {
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
@@ -49,12 +53,13 @@ public class MagmaMonsters {
 		}
 	};
 	
+	@SuppressWarnings("deprecation")
 	private void setup(final FMLCommonSetupEvent event) {
 		ModEntities.registerEntitySpawns();
 		//MinecraftForge.EVENT_BUS.register(new ModEvents());
-
-		NETWORK_WRAPPER = NetworkRegistry.ChannelBuilder.named(new ResourceLocation(Reference.MOD_ID, "net")).simpleChannel();
+		DeferredWorkQueue.runLater(() -> {
 		NETWORK_WRAPPER.registerMessage(0, QuenchMessage.class, QuenchMessage::encode, QuenchMessage::decode, QuenchMessage.Handler::handle);
+		});
 	}
 
 	private void doClientStuff(final FMLClientSetupEvent event) {

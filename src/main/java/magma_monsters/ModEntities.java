@@ -28,10 +28,10 @@ public class ModEntities {
 
 	public static void init() {
 
-		MAGMA_MONSTER = EntityType.Builder.create(EntityMagmaMonster::new, EntityClassification.MONSTER).size(0.90F, 1.75F).build(getEntityResource("magma_monster").toString());
+		MAGMA_MONSTER = EntityType.Builder.create(EntityMagmaMonster::new, EntityClassification.MONSTER).immuneToFire().size(0.90F, 1.75F).build(getEntityResource("magma_monster").toString());
 		EntitySpawnPlacementRegistry.register(MAGMA_MONSTER, PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, EntityMagmaMonster::canSpawnHere);
 		
-		MAGMA_MONSTER_GRUNT = EntityType.Builder.create(EntityMagmaMonsterGrunt::new, EntityClassification.MONSTER).size(0.5F, 0.9F).build(getEntityResource("magma_monster_grunt").toString());
+		MAGMA_MONSTER_GRUNT = EntityType.Builder.create(EntityMagmaMonsterGrunt::new, EntityClassification.MONSTER).immuneToFire().size(0.5F, 0.9F).build(getEntityResource("magma_monster_grunt").toString());
 		EntitySpawnPlacementRegistry.register(MAGMA_MONSTER_GRUNT, PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, EntityMagmaMonsterGrunt::canSpawnHere);
 
 // egg colour 0xFF0000, 0x06B900;
