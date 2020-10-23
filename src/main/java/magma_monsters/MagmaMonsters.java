@@ -18,8 +18,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -35,8 +33,6 @@ public class MagmaMonsters {
 
 	public MagmaMonsters () {
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
 		MinecraftForge.EVENT_BUS.register(this);
 
@@ -45,17 +41,18 @@ public class MagmaMonsters {
 		Path path = FMLPaths.CONFIGDIR.get().resolve("magma_monsters_mod-common.toml");
 		Config.loadConfig(Config.COMMON_CONFIG, path);
 	}
-	
+
 	public static ItemGroup TAB = new ItemGroup(Reference.MOD_ID) {
 		@Override
 		public ItemStack createIcon() {
 			return new ItemStack (Items.MAGMA_CREAM);
 		}
 	};
-	
+
 	@SuppressWarnings("deprecation")
 	private void setup(final FMLCommonSetupEvent event) {
-		ModEntities.registerEntitySpawns();
+		MinecraftForge.EVENT_BUS.register(new ModSpawns());
+		ModEntities.registerEntityAttributes();
 		//MinecraftForge.EVENT_BUS.register(new ModEvents());
 		DeferredWorkQueue.runLater(() -> {
 		NETWORK_WRAPPER.registerMessage(0, QuenchMessage.class, QuenchMessage::encode, QuenchMessage::decode, QuenchMessage.Handler::handle);
@@ -66,11 +63,4 @@ public class MagmaMonsters {
 		RenderingRegistry.registerEntityRenderingHandler(ModEntities.MAGMA_MONSTER, RenderMagmaMonster::new);
 		RenderingRegistry.registerEntityRenderingHandler(ModEntities.MAGMA_MONSTER_GRUNT, RenderMagmaMonsterGrunt::new);
 	}
-
-	private void enqueueIMC(final InterModEnqueueEvent event) {}
-
-	private void processIMC(final InterModProcessEvent event) {}
-
-	
-
 }

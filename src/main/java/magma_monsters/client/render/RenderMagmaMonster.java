@@ -17,7 +17,7 @@ public class RenderMagmaMonster extends MobRenderer<EntityMagmaMonster, ModelMag
 
 	public RenderMagmaMonster(EntityRendererManager renderManagerIn) {
         super(renderManagerIn, new ModelMagmaMonster<>(), 0.75F);
-       // addLayer(new LayerMagmaMonster(this));
+        addLayer(new LayerMagmaMonster(this));
     }
 
 	@Override
@@ -28,6 +28,6 @@ public class RenderMagmaMonster extends MobRenderer<EntityMagmaMonster, ModelMag
 
 	@Override
 	public ResourceLocation getEntityTexture(EntityMagmaMonster entity) {
-		return entity.getMolten() ? LIGHTING_TEXTURE : TEXTURE;
+		return TEXTURE;
 	}
 }
