@@ -137,6 +137,15 @@ public class EntityMagmaMonsterGrunt extends MonsterEntity {
 	}
 
 	@Override
+	public float getBlockPathWeight(BlockPos pos, IWorldReader worldIn) {
+		if (worldIn.getBlockState(pos).getFluidState().isTagged(FluidTags.LAVA)) {
+			return 10.0F;
+		} else {
+			return this.isInLava() ? Float.NEGATIVE_INFINITY : 0.0F;
+		}
+	}
+
+	@Override
     public boolean isNotColliding(IWorldReader world) {
         return world.checkNoEntityCollision(this);
 	}

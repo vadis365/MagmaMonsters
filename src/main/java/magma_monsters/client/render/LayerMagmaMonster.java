@@ -44,7 +44,7 @@ public class LayerMagmaMonster extends LayerRenderer<EntityMagmaMonster, ModelMa
 		monsterModel.leftTuskEnd.showModel = false;
 		monsterModel.setLivingAnimations(entity, limbSwing, limbSwingAmount, partialTicks);
 		monsterModel.setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-		monsterModel.render(matrix, buffer.getBuffer(getLavaOverlay(LIGHTING_TEXTURE, 0, -f * 0.002F)), packedLight, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, (float)entity.getMoltenTimer() * 0.02F);
+		monsterModel.render(matrix, buffer.getBuffer(getLavaOverlay(LIGHTING_TEXTURE, 0, -f * 0.004F)), packedLight, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, (float)entity.getMoltenTimer() * 0.02F);
 	}
 
 	public static RenderType getLavaOverlay(ResourceLocation locationIn, float uIn, float vIn) {
