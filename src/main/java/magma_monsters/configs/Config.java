@@ -26,8 +26,8 @@ public class Config {
     public static ForgeConfigSpec COMMON_CONFIG;
     public static ForgeConfigSpec CLIENT_CONFIG;
 
-	public static ConfigValue<List<? extends Integer>> MAGMA_MONSTER_BLACKLISTED_DIMS;
-	public static ConfigValue<List<? extends Integer>> MAGMA_MONSTER_GRUNT_BLACKLISTED_DIMS;
+	public static ConfigValue<List<? extends String>> MAGMA_MONSTER_BLACKLISTED_DIMS;
+	public static ConfigValue<List<? extends String>> MAGMA_MONSTER_GRUNT_BLACKLISTED_DIMS;
 
 	public static ForgeConfigSpec.BooleanValue MAGMA_MONSTER_OW_SPAWN;
 	public static ForgeConfigSpec.IntValue MAGMA_MONSTER_OW_MIN_SPAWN_SIZE;
@@ -63,8 +63,8 @@ public class Config {
 	public static ForgeConfigSpec.DoubleValue MAGMA_MONSTER_GRUNT_ATTACK_DAMAGE;
 	public static ForgeConfigSpec.IntValue MAGMA_MONSTER_GRUNT_SLOWNESS_EFFECT_DURATION;
 
-	static List<Integer> blacklistedDimsMagmaMonster = new ArrayList<>();
-	static List<Integer> blacklistedDimsMagmaMonsterGrunt = new ArrayList<>();
+	static List<String> blacklistedDimsMagmaMonster = new ArrayList<>();
+	static List<String> blacklistedDimsMagmaMonsterGrunt = new ArrayList<>();
 	
     static {
         COMMON_BUILDER.comment("Magma Monster Settings").push(MAGMA_MONSTER);
@@ -86,7 +86,7 @@ public class Config {
 		MAGMA_MONSTER_ATTACK_DAMAGE = COMMON_BUILDER.comment("Magma Monster Attack Damage").defineInRange("magma_monster_attack_damage", 4D, 1D, Double.MAX_VALUE);
 		MAGMA_MONSTER_SLOWNESS_EFFECT_DURATION = COMMON_BUILDER.comment("Obsidian Monster Slowness Effect Duration (Seconds)").defineInRange("magma_monster_slowness_effect", 5, 1, Integer.MAX_VALUE);
 
-		MAGMA_MONSTER_BLACKLISTED_DIMS = COMMON_BUILDER.comment("Magma Monster Dimension Blacklist").defineList("magma_monster_dimensions", blacklistedDimsMagmaMonster, p-> isSafeInteger((int) p));
+		MAGMA_MONSTER_BLACKLISTED_DIMS = COMMON_BUILDER.comment("Magma Monster Dimension Blacklist").defineList("magma_monster_dimensions", blacklistedDimsMagmaMonster, p-> isPointless());
 
 		COMMON_BUILDER.pop();
 
@@ -108,7 +108,7 @@ public class Config {
 		MAGMA_MONSTER_GRUNT_ATTACK_DAMAGE = COMMON_BUILDER.comment("Magma Monster Grunt Attack Damage").defineInRange("magma_monster_grunt_attack_damage", 2D, 1D, Double.MAX_VALUE);
 		MAGMA_MONSTER_GRUNT_SLOWNESS_EFFECT_DURATION = COMMON_BUILDER.comment("Obsidian Grunt Slowness Effect Duration (Seconds)").defineInRange("magma_monster_grunt_slowness_effect", 5, 1, Integer.MAX_VALUE);
 
-		MAGMA_MONSTER_GRUNT_BLACKLISTED_DIMS = COMMON_BUILDER.comment("Magma Monster Grunt Dimension Blacklist").defineList("magma_monster_grunt_dimensions", blacklistedDimsMagmaMonsterGrunt, p-> isSafeInteger((int) p));
+		MAGMA_MONSTER_GRUNT_BLACKLISTED_DIMS = COMMON_BUILDER.comment("Magma Monster Grunt Dimension Blacklist").defineList("magma_monster_grunt_dimensions", blacklistedDimsMagmaMonsterGrunt, p-> isPointless());
 
         COMMON_BUILDER.pop();
 
@@ -118,6 +118,10 @@ public class Config {
 
 	public static boolean isSafeInteger(int checkNum) {
 		return checkNum >= Integer.MIN_VALUE && checkNum <= Integer.MAX_VALUE;
+	}
+
+	public static boolean isPointless() {
+		return true;
 	}
 
     public static void loadConfig(ForgeConfigSpec spec, Path path) {

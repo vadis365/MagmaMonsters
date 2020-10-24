@@ -45,6 +45,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.IndirectEntityDamageSource;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
@@ -129,11 +130,23 @@ public class EntityMagmaMonster extends MonsterEntity {
 	}
 
 	public static boolean canSpawnHere(EntityType<EntityMagmaMonster> entity, IWorld world, SpawnReason spawn_reason, BlockPos pos, Random random) {
-	      BlockPos.Mutable blockPosMutable = pos.func_239590_i_();
-	      do {
-	    	  blockPosMutable.move(Direction.UP);
-	      } while(world.getFluidState(blockPosMutable).isTagged(FluidTags.LAVA));
+		if (isDimBlacklisted(getDimensionRegName(((World) world).func_234923_W_())))
+			return false;
+		BlockPos.Mutable blockPosMutable = pos.func_239590_i_();
+		do {
+			blockPosMutable.move(Direction.UP);
+		} while (world.getFluidState(blockPosMutable).isTagged(FluidTags.LAVA));
 		return world.getBlockState(blockPosMutable).isAir() && blockPosMutable.getY() <= Config.MAGMA_MONSTER_SPAWN_Y_HEIGHT.get();
+	}
+
+	public static boolean isDimBlacklisted(String dimensionIn) {
+		if(Config.MAGMA_MONSTER_BLACKLISTED_DIMS.get().contains(dimensionIn))
+			return true;
+		return false;
+	}
+
+	public static String getDimensionRegName(RegistryKey<World> reg) {
+		return reg.func_240901_a_().toString();
 	}
 
 	@Override
