@@ -13,11 +13,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class RenderMagmaMonsterGrunt extends MobRenderer<EntityMagmaMonsterGrunt, ModelMagmaMonsterGrunt<EntityMagmaMonsterGrunt>> {
 	public static final ResourceLocation TEXTURE = new ResourceLocation("magma_monsters:textures/entity/magma_monster_cobble.png");
-	public static final ResourceLocation LIGHTING_TEXTURE = new ResourceLocation("magma_monsters:textures/entity/magma_monster_flow.png");//temp
 
 	public RenderMagmaMonsterGrunt(EntityRendererManager renderManagerIn) {
         super(renderManagerIn, new ModelMagmaMonsterGrunt<>(), 0.4F);
-      //  addLayer(new LayerMagmaMonsterGrunt(this));
+        addLayer(new LayerMagmaMonsterGrunt(this));
     }
 
 	@Override
@@ -28,6 +27,6 @@ public class RenderMagmaMonsterGrunt extends MobRenderer<EntityMagmaMonsterGrunt
 
 	@Override
 	public ResourceLocation getEntityTexture(EntityMagmaMonsterGrunt entity) {
-		return entity.getMolten() ? LIGHTING_TEXTURE : TEXTURE;
+		return TEXTURE;
 	}
 }

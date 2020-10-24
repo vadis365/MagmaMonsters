@@ -41,12 +41,13 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Direction;
 import net.minecraft.util.IndirectEntityDamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IWorld;
@@ -66,7 +67,6 @@ public class EntityMagmaMonster extends MonsterEntity {
 		setPathPriority(PathNodeType.LAVA, 8.0F);
 		setPathPriority(PathNodeType.DANGER_FIRE, 0.0F);
 		setPathPriority(PathNodeType.DAMAGE_FIRE, 0.0F);
-		//isImmuneToFire = true;
 		experienceValue = 10;
 	}
 
@@ -129,26 +129,11 @@ public class EntityMagmaMonster extends MonsterEntity {
 	}
 
 	public static boolean canSpawnHere(EntityType<EntityMagmaMonster> entity, IWorld world, SpawnReason spawn_reason, BlockPos pos, Random random) {
-		return true;//getCanSpawnNearLava() && getPosY() <= ConfigHandler.MAGMA_SPAWN_Y_HEIGHT;
-	}
-
-	public boolean getCanSpawnNearLava() {
-		AxisAlignedBB axisalignedbb = getBoundingBox().grow(5.0D, 5.0D, 5.0D);
-		int n = MathHelper.floor(axisalignedbb.minX);
-		int o = MathHelper.floor(axisalignedbb.maxX);
-		int p = MathHelper.floor(axisalignedbb.minY);
-		int q = MathHelper.floor(axisalignedbb.maxY);
-		int n1 = MathHelper.floor(axisalignedbb.minZ);
-		int o1 = MathHelper.floor(axisalignedbb.maxZ);
-		for (int p1 = n; p1 < o; p1++)
-			for (int q1 = p; q1 < q; q1++)
-				for (int n2 = n1; n2 < o1; n2++) {
-					BlockState o2 = getEntityWorld().getBlockState(new BlockPos(p1, q1, n2));
-					if (!this.getEntityWorld().isAirBlock(new BlockPos(p1, q1, n2)))
-						if (o2.getMaterial() == Material.LAVA)
-							return true;
-				}
-		return false;
+	      BlockPos.Mutable blockPosMutable = pos.func_239590_i_();
+	      do {
+	    	  blockPosMutable.move(Direction.UP);
+	      } while(world.getFluidState(blockPosMutable).isTagged(FluidTags.LAVA));
+		return world.getBlockState(blockPosMutable).isAir() && blockPosMutable.getY() <= Config.MAGMA_MONSTER_SPAWN_Y_HEIGHT.get();
 	}
 
 	@Override
@@ -211,7 +196,7 @@ public class EntityMagmaMonster extends MonsterEntity {
 		while (players.hasNext()) {
 			PlayerEntity playersNear = players.next();
 			if ((playersNear).getDistanceSq(entity) < 1024.0D) {
-				MagmaMonsters.NETWORK_WRAPPER.sendTo(new QuenchMessage(x, y, z, type), ((ServerPlayerEntity) playersNear).connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
+				MagmaMonsters.NETWORK_WRAPPER.sendTo(new QuenchMessage(x, y, z, type), ((ServerPlayerEntity) playersNear).connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
 			}
 		}
 	}
@@ -222,14 +207,14 @@ public class EntityMagmaMonster extends MonsterEntity {
 		if (!getEntityWorld().isRemote) {
 			if (isWet() && !isInLava() && getMolten()) {
 		        getEntityWorld().playSound(null, getPosX(), getPosY(), getPosZ(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.HOSTILE, 1F, 2.6F + (getEntityWorld().rand.nextFloat() - getEntityWorld().rand.nextFloat()) * 0.8F);
-		      //  changeParticles(this, (float)getPosX(), (float)getPosY() + 0.9F, (float)getPosZ(), (byte) 0);
+		        changeParticles(this, (float)getPosX(), (float)getPosY() + 0.9F, (float)getPosZ(), (byte) 0);
 				setMolten(false);
 				getAttribute(Attributes.field_233826_i_).setBaseValue(10D);
 			}
 
 			if (isInLava() && !getMolten()) {
 		        getEntityWorld().playSound(null, getPosX(), getPosY(), getPosZ(), SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.HOSTILE, 1F, 0.6F + (getEntityWorld().rand.nextFloat() - getEntityWorld().rand.nextFloat()) * 0.8F);
-		      //  changeParticles(this, (float)getPosX(), (float)getPosY() + 0.9F, (float)getPosZ(), (byte) 1);
+		        changeParticles(this, (float)getPosX(), (float)getPosY() + 0.9F, (float)getPosZ(), (byte) 1);
 				setMolten(true);
 				getAttribute(Attributes.field_233826_i_).setBaseValue(0D);
 			}

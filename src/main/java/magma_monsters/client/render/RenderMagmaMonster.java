@@ -13,7 +13,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class RenderMagmaMonster extends MobRenderer<EntityMagmaMonster, ModelMagmaMonster<EntityMagmaMonster>> {
 	public static final ResourceLocation TEXTURE = new ResourceLocation("magma_monsters:textures/entity/magma_monster.png");
-	public static final ResourceLocation LIGHTING_TEXTURE = new ResourceLocation("magma_monsters:textures/entity/magma_monster_flow.png"); // temp
 
 	public RenderMagmaMonster(EntityRendererManager renderManagerIn) {
         super(renderManagerIn, new ModelMagmaMonster<>(), 0.75F);

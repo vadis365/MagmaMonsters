@@ -32,18 +32,18 @@ public class QuenchMessage {
 		buf.writeByte(type);
 	}
 
-	public static QuenchMessage decode(PacketBuffer buf) {
+	public QuenchMessage (PacketBuffer buf) {
 		posX = buf.readFloat();
 		posY = buf.readFloat();
 		posZ = buf.readFloat();
 		type = buf.readByte();
-		return null;
 	}
 
 	public static class Handler {
 		@SuppressWarnings("static-access")
 		@OnlyIn(Dist.CLIENT)
 		public static void handle(final QuenchMessage pkt, Supplier<NetworkEvent.Context> ctx) {
+			ctx.get().enqueueWork(() -> {
 			World world = Minecraft.getInstance().world;
 			if (world == null)
 				return;
@@ -55,6 +55,8 @@ public class QuenchMessage {
 					if (pkt.type == 1)
 						ClientParticles.spawnCustomParticle("flame", world, pkt.posX + -MathHelper.sin((float) ang) * 0.125F, pkt.posY, pkt.posZ + MathHelper.cos((float) ang) * 0.125F, -MathHelper.sin((float) ang) * 0.1, 0.05D, MathHelper.cos((float) ang) * 0.1);
 				}
-		}
+		    });
+		    ctx.get().setPacketHandled(true);
+		}	
 	}
 }
