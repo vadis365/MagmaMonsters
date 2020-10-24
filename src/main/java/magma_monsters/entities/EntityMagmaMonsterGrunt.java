@@ -201,7 +201,7 @@ public class EntityMagmaMonsterGrunt extends MonsterEntity {
 	@Override
 	public void tick() {
 		super.tick();
-		if (getEntityWorld().isRemote && getEntityWorld().getGameTime() % 10 == 0 && getMolten())
+		if (getEntityWorld().isRemote && getEntityWorld().getGameTime() % 40 == 0 && getMolten())
 			lavaParticles(getEntityWorld(), getPosX(), getPosY() + 0.75D, getPosZ(), rand);
 
 		if (!getEntityWorld().isRemote) {
@@ -259,7 +259,7 @@ public class EntityMagmaMonsterGrunt extends MonsterEntity {
 					BlockPos blockpos = new BlockPos(i, j, k);
 					BlockState blockstate = AbstractFireBlock.func_235326_a_(getEntityWorld(), blockpos);
 					if (getEntityWorld().getBlockState(blockpos).getMaterial() == Material.AIR && blockstate.isValidPosition(getEntityWorld(), blockpos))
-						getEntityWorld().setBlockState(blockpos, Blocks.FIRE.getDefaultState());
+						getEntityWorld().setBlockState(blockpos, blockstate, 11);
 				}
 			}
 		}
