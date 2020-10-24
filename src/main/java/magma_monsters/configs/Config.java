@@ -70,14 +70,14 @@ public class Config {
         COMMON_BUILDER.comment("Magma Monster Settings").push(MAGMA_MONSTER);
         
 		MAGMA_MONSTER_OW_SPAWN = COMMON_BUILDER.comment("Spawn Over World Magma Monsters").define("magma_monster_ow_spawns", true);
-		MAGMA_MONSTER_OW_MIN_SPAWN_SIZE = COMMON_BUILDER.comment("Over World Magma Monster Group Minimum Size").defineInRange("magma_monster_min_spawn_size", 1, 1, Integer.MAX_VALUE);
-		MAGMA_MONSTER_OW_MAX_SPAWN_SIZE = COMMON_BUILDER.comment("Over World Magma Monster Group Maximum Size").defineInRange("magma_monster_max_spawn_size", 3, 1, Integer.MAX_VALUE);
-		MAGMA_MONSTER_OW_SPAWN_PROBABILITY = COMMON_BUILDER.comment("Over World Magma Monster Chance Probability").defineInRange("magma_monster_chance", 20, 1, Integer.MAX_VALUE);
+		MAGMA_MONSTER_OW_MIN_SPAWN_SIZE = COMMON_BUILDER.comment("Over World Magma Monster Group Minimum Size").defineInRange("magma_monster_min_spawn_size_ow", 1, 1, Integer.MAX_VALUE);
+		MAGMA_MONSTER_OW_MAX_SPAWN_SIZE = COMMON_BUILDER.comment("Over World Magma Monster Group Maximum Size").defineInRange("magma_monster_max_spawn_size_ow", 3, 1, Integer.MAX_VALUE);
+		MAGMA_MONSTER_OW_SPAWN_PROBABILITY = COMMON_BUILDER.comment("Over World Magma Monster Chance Probability").defineInRange("magma_monster_chance_ow", 20, 1, Integer.MAX_VALUE);
 
 		MAGMA_MONSTER_HELL_SPAWN = COMMON_BUILDER.comment("Spawn Nether Magma Monsters").define("magma_monster_nether_spawns", true);
-		MAGMA_MONSTER_HELL_MIN_SPAWN_SIZE = COMMON_BUILDER.comment("Nether Magma Monster Group Minimum Size").defineInRange("magma_monster_min_spawn_size", 1, 1, Integer.MAX_VALUE);
-		MAGMA_MONSTER_HELL_MAX_SPAWN_SIZE = COMMON_BUILDER.comment("Nether Magma Monster Group Maximum Size").defineInRange("magma_monster_max_spawn_size", 3, 1, Integer.MAX_VALUE);
-		MAGMA_MONSTER_HELL_SPAWN_PROBABILITY = COMMON_BUILDER.comment("Nether Magma Monster Chance Probability").defineInRange("magma_monster_chance", 20, 1, Integer.MAX_VALUE);
+		MAGMA_MONSTER_HELL_MIN_SPAWN_SIZE = COMMON_BUILDER.comment("Nether Magma Monster Group Minimum Size").defineInRange("magma_monster_min_spawn_size_n", 1, 1, Integer.MAX_VALUE);
+		MAGMA_MONSTER_HELL_MAX_SPAWN_SIZE = COMMON_BUILDER.comment("Nether Magma Monster Group Maximum Size").defineInRange("magma_monster_max_spawn_size_n", 3, 1, Integer.MAX_VALUE);
+		MAGMA_MONSTER_HELL_SPAWN_PROBABILITY = COMMON_BUILDER.comment("Nether Magma Monster Chance Probability").defineInRange("magma_monster_chance_n", 20, 1, Integer.MAX_VALUE);
 
 		MAGMA_MONSTER_SPAWN_Y_HEIGHT = COMMON_BUILDER.comment("Magma Monster Max Y Spawn Height").defineInRange("magma_monster_max_y", 63, 1, 256);
 		MAGMA_MONSTER_BLOCK_FIRE = COMMON_BUILDER.comment("Spawn Fire Whilst On Flamable Blocks").define("magma_monster_burns_blocks", true);
@@ -92,14 +92,14 @@ public class Config {
 
         COMMON_BUILDER.comment("Magma Monster Grunt Settings").push(MAGMA_MONSTER_GRUNT);
 		MAGMA_MONSTER_GRUNT_OW_SPAWN = COMMON_BUILDER.comment("Spawn Over World Magma Monster Grunts").define("magma_monster_grunt_ow_spawns", true);
-		MAGMA_MONSTER_GRUNT_OW_MIN_SPAWN_SIZE = COMMON_BUILDER.comment("Over World Magma Monster Grunt Group Minimum Size").defineInRange("magma_monster_grunt_min_spawn_size", 1, 1, Integer.MAX_VALUE);
-		MAGMA_MONSTER_GRUNT_OW_MAX_SPAWN_SIZE = COMMON_BUILDER.comment("Over World Magma Monster Grunt Group Maximum Size").defineInRange("magma_monster_grunt_max_spawn_size", 3, 1, Integer.MAX_VALUE);
-		MAGMA_MONSTER_GRUNT_OW_SPAWN_PROBABILITY = COMMON_BUILDER.comment("Over World Magma Monster Grunt Chance Probability").defineInRange("magma_monster_grunt_chance", 20, 1, Integer.MAX_VALUE);
+		MAGMA_MONSTER_GRUNT_OW_MIN_SPAWN_SIZE = COMMON_BUILDER.comment("Over World Magma Monster Grunt Group Minimum Size").defineInRange("magma_monster_grunt_min_spawn_size_ow", 1, 1, Integer.MAX_VALUE);
+		MAGMA_MONSTER_GRUNT_OW_MAX_SPAWN_SIZE = COMMON_BUILDER.comment("Over World Magma Monster Grunt Group Maximum Size").defineInRange("magma_monster_grunt_max_spawn_size_ow", 3, 1, Integer.MAX_VALUE);
+		MAGMA_MONSTER_GRUNT_OW_SPAWN_PROBABILITY = COMMON_BUILDER.comment("Over World Magma Monster Grunt Chance Probability").defineInRange("magma_monster_grunt_chance_ow", 20, 1, Integer.MAX_VALUE);
 
 		MAGMA_MONSTER_GRUNT_HELL_SPAWN = COMMON_BUILDER.comment("Spawn Nether Magma Monster Grunts").define("magma_monster_grunt_nether_spawns", true);
-		MAGMA_MONSTER_GRUNT_HELL_MIN_SPAWN_SIZE = COMMON_BUILDER.comment("Nether Magma Monster Grunt Group Minimum Size").defineInRange("magma_monster_grunt_min_spawn_size", 1, 1, Integer.MAX_VALUE);
-		MAGMA_MONSTER_GRUNT_HELL_MAX_SPAWN_SIZE = COMMON_BUILDER.comment("Nether Magma Monster Grunt Group Maximum Size").defineInRange("magma_monster_grunt_max_spawn_size", 3, 1, Integer.MAX_VALUE);
-		MAGMA_MONSTER_GRUNT_HELL_SPAWN_PROBABILITY = COMMON_BUILDER.comment("Nether Magma Monster Grunt Chance Probability").defineInRange("magma_monster_grunt_chance", 20, 1, Integer.MAX_VALUE);
+		MAGMA_MONSTER_GRUNT_HELL_MIN_SPAWN_SIZE = COMMON_BUILDER.comment("Nether Magma Monster Grunt Group Minimum Size").defineInRange("magma_monster_grunt_min_spawn_size_n", 1, 1, Integer.MAX_VALUE);
+		MAGMA_MONSTER_GRUNT_HELL_MAX_SPAWN_SIZE = COMMON_BUILDER.comment("Nether Magma Monster Grunt Group Maximum Size").defineInRange("magma_monster_grunt_max_spawn_size_n", 3, 1, Integer.MAX_VALUE);
+		MAGMA_MONSTER_GRUNT_HELL_SPAWN_PROBABILITY = COMMON_BUILDER.comment("Nether Magma Monster Grunt Chance Probability").defineInRange("magma_monster_grunt_chance_n", 20, 1, Integer.MAX_VALUE);
 
 		MAGMA_MONSTER_GRUNT_SPAWN_Y_HEIGHT = COMMON_BUILDER.comment("Magma Monster Grunt Max Y Spawn Height").defineInRange("magma_monster_grunt_max_y", 63, 1, 256);
 		MAGMA_MONSTER_GRUNT_BLOCK_FIRE = COMMON_BUILDER.comment("Spawn Fire Whilst Grunt On Flamable Blocks").define("magma_monster_grunt_burns_blocks", true);
