@@ -219,7 +219,7 @@ public class EntityMagmaMonsterGrunt extends MonsterEntity {
 		while (players.hasNext()) {
 			PlayerEntity playersNear = players.next();
 			if ((playersNear).getDistanceSq(entity) < 1024.0D) {
-				MagmaMonsters.NETWORK_WRAPPER.sendTo(new QuenchMessage(x, y, z, type), ((ServerPlayerEntity) playersNear).connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
+				MagmaMonsters.NETWORK_WRAPPER.sendTo(new QuenchMessage(x, y, z, type), ((ServerPlayerEntity) playersNear).connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
 			}
 		}
 	}
