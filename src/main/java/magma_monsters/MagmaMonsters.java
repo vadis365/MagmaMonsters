@@ -52,7 +52,6 @@ public class MagmaMonsters {
 	private void setup(final FMLCommonSetupEvent event) {
 		MinecraftForge.EVENT_BUS.register(new ModSpawns());
 		ModEntities.registerEntityAttributes();
-		//MinecraftForge.EVENT_BUS.register(new ModEvents());
 		NETWORK_WRAPPER.registerMessage(0, QuenchMessage.class, QuenchMessage::encode, QuenchMessage::new, QuenchMessage.Handler::handle);
 	}
 

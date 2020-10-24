@@ -178,10 +178,6 @@ public class EntityMagmaMonsterGrunt extends MonsterEntity {
 		return ModSounds.MAGMA_MONSTER_DEATH;
 	}
 
-	protected static boolean isValidLightLevel(IWorld world, BlockPos pos) {
-		return true;
-	}
-
 	@Override
 	protected float getSoundPitch() {
 		return 2F;
