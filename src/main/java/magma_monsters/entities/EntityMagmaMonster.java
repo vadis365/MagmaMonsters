@@ -123,16 +123,16 @@ public class EntityMagmaMonster extends MonsterEntity {
 
 	public static AttributeModifierMap.MutableAttribute registerAttributes() {
 		return MonsterEntity.func_234295_eP_()
-				.func_233815_a_(Attributes.field_233818_a_, Config.MAGMA_MONSTER_HEALTH.get()) //health
-				.func_233815_a_(Attributes.field_233819_b_, 32D) //follow range
-				.func_233815_a_(Attributes.field_233821_d_, 0.23000000417232513D) //move speed
-				.func_233815_a_(Attributes.field_233823_f_, Config.MAGMA_MONSTER_ATTACK_DAMAGE.get()); //attack damage	
+				.createMutableAttribute(Attributes.MAX_HEALTH, Config.MAGMA_MONSTER_HEALTH.get()) //health
+				.createMutableAttribute(Attributes.FOLLOW_RANGE, 32D) //follow range
+				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.23000000417232513D) //move speed
+				.createMutableAttribute(Attributes.ATTACK_DAMAGE, Config.MAGMA_MONSTER_ATTACK_DAMAGE.get()); //attack damage	
 	}
 
 	public static boolean canSpawnHere(EntityType<EntityMagmaMonster> entity, IWorld world, SpawnReason spawn_reason, BlockPos pos, Random random) {
-		if (isDimBlacklisted(getDimensionRegName(((World) world).func_234923_W_())))
+		if(isDimBlacklisted(getDimensionRegName(((World) world).getDimensionKey())))
 			return false;
-		BlockPos.Mutable blockPosMutable = pos.func_239590_i_();
+		BlockPos.Mutable blockPosMutable = pos.toMutable();
 		do {
 			blockPosMutable.move(Direction.UP);
 		} while (world.getFluidState(blockPosMutable).isTagged(FluidTags.LAVA));
@@ -146,7 +146,7 @@ public class EntityMagmaMonster extends MonsterEntity {
 	}
 
 	public static String getDimensionRegName(RegistryKey<World> reg) {
-		return reg.func_240901_a_().toString();
+		return reg.getRegistryName().toString();
 	}
 
 	@Override
@@ -227,14 +227,14 @@ public class EntityMagmaMonster extends MonsterEntity {
 		        getEntityWorld().playSound(null, getPosX(), getPosY(), getPosZ(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.HOSTILE, 1F, 2.6F + (getEntityWorld().rand.nextFloat() - getEntityWorld().rand.nextFloat()) * 0.8F);
 		        changeParticles(this, (float)getPosX(), (float)getPosY() + 0.9F, (float)getPosZ(), (byte) 0);
 				setMolten(false);
-				getAttribute(Attributes.field_233826_i_).setBaseValue(10D);
+				getAttribute(Attributes.ARMOR).setBaseValue(10D);
 			}
 
 			if (isInLava() && !getMolten()) {
 		        getEntityWorld().playSound(null, getPosX(), getPosY(), getPosZ(), SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.HOSTILE, 1F, 0.6F + (getEntityWorld().rand.nextFloat() - getEntityWorld().rand.nextFloat()) * 0.8F);
 		        changeParticles(this, (float)getPosX(), (float)getPosY() + 0.9F, (float)getPosZ(), (byte) 1);
 				setMolten(true);
-				getAttribute(Attributes.field_233826_i_).setBaseValue(0D);
+				getAttribute(Attributes.ARMOR).setBaseValue(0D);
 			}
 
 			if (rand.nextInt(40) == 0 && Config.MAGMA_MONSTER_BLOCK_FIRE.get() && getMolten()) {
@@ -246,7 +246,7 @@ public class EntityMagmaMonster extends MonsterEntity {
 					j = MathHelper.floor(getPosY());
 					k = MathHelper.floor(getPosZ() + (double) ((float) (l / 2 % 2 * 2 - 1) * 0.25F));
 					BlockPos blockpos = new BlockPos(i, j, k);
-					BlockState blockstate = AbstractFireBlock.func_235326_a_(getEntityWorld(), blockpos);
+					BlockState blockstate = AbstractFireBlock.getFireForPlacement(getEntityWorld(), blockpos);
 					if (getEntityWorld().getBlockState(blockpos).getMaterial() == Material.AIR && blockstate.isValidPosition(getEntityWorld(), blockpos))
 						getEntityWorld().setBlockState(blockpos, blockstate, 11);
 				}
@@ -258,7 +258,7 @@ public class EntityMagmaMonster extends MonsterEntity {
 	public boolean attackEntityAsMob(Entity entity) {
 		if (canEntityBeSeen(entity)) {
 			int modifier =  !getMolten() ? 2 : 1;
-			boolean hasHitTarget = entity.attackEntityFrom(DamageSource.causeMobDamage(this), (float) ((int) this.getAttribute(Attributes.field_233823_f_).getBaseValue() * modifier));
+			boolean hasHitTarget = entity.attackEntityFrom(DamageSource.causeMobDamage(this), (float) ((int) this.getAttribute(Attributes.ATTACK_DAMAGE).getBaseValue() * modifier));
 			if (hasHitTarget) {
 				if (entity instanceof LivingEntity && !getMolten()) {
 					int duration = Config.MAGMA_MONSTER_SLOWNESS_EFFECT_DURATION.get();
@@ -350,7 +350,7 @@ public class EntityMagmaMonster extends MonsterEntity {
 
 					if (attackStep > 1) {
 						float f = MathHelper.sqrt(MathHelper.sqrt(d0)) * 0.5F;
-						magma_monster.getEntityWorld().playEvent((PlayerEntity) null, 1018, magma_monster.func_233580_cy_(), 0);
+						magma_monster.getEntityWorld().playEvent((PlayerEntity) null, 1018, magma_monster.getPosition(), 0);
 
 						for (int i = 0; i < 1; ++i) {
 							SmallFireballEntity smallfireballentity = new SmallFireballEntity(magma_monster.getEntityWorld(), magma_monster, d1 + magma_monster.getRNG().nextGaussian() * (double) f, d2, d3 + magma_monster.getRNG().nextGaussian() * (double) f);
