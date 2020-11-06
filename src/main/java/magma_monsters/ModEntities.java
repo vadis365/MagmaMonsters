@@ -46,8 +46,8 @@ public class ModEntities {
 	}
 
 	public static void registerEntityAttributes() {
-		GlobalEntityTypeAttributes.put(MAGMA_MONSTER, EntityMagmaMonster.registerAttributes().func_233813_a_());
-		GlobalEntityTypeAttributes.put(MAGMA_MONSTER_GRUNT, EntityMagmaMonsterGrunt.registerAttributes().func_233813_a_());
+		GlobalEntityTypeAttributes.put(MAGMA_MONSTER, EntityMagmaMonster.registerAttributes().create());
+		GlobalEntityTypeAttributes.put(MAGMA_MONSTER_GRUNT, EntityMagmaMonsterGrunt.registerAttributes().create());
 	}
 
 	private static ResourceLocation getEntityResource(String entityName) {
