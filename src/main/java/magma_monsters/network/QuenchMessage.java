@@ -41,7 +41,6 @@ public class QuenchMessage {
 
 	public static class Handler {
 		@SuppressWarnings("static-access")
-		@OnlyIn(Dist.CLIENT)
 		public static void handle(final QuenchMessage pkt, Supplier<NetworkEvent.Context> ctx) {
 			ctx.get().enqueueWork(() -> {
 			World world = Minecraft.getInstance().world;
