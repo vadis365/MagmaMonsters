@@ -129,6 +129,7 @@ public class EntityMagmaMonsterGrunt extends MonsterEntity {
 				.createMutableAttribute(Attributes.ATTACK_DAMAGE, Config.MAGMA_MONSTER_GRUNT_ATTACK_DAMAGE.get()); //attack damage	
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean canSpawnHere(EntityType<EntityMagmaMonsterGrunt> entity, IWorld world, SpawnReason spawn_reason, BlockPos pos, Random random) {
 		if(isDimBlacklisted(getDimensionRegName(((World) world).getDimensionKey())))
 			return false;
@@ -211,7 +212,7 @@ public class EntityMagmaMonsterGrunt extends MonsterEntity {
 
 	@OnlyIn(Dist.CLIENT)
 	public void lavaParticles(World world, double x, double y, double z, Random rand) {
-		ClientParticles.spawnCustomParticle("lava", getEntityWorld(), x, y, z, 0F, 0F, 0F);
+		ClientParticles.spawnCustomParticle("lava", x, y, z, 0F, 0F, 0F);
 	}
 
 	public void changeParticles(Entity entity, float x, float y, float z, byte type) {

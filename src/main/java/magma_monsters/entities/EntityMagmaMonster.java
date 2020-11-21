@@ -129,6 +129,7 @@ public class EntityMagmaMonster extends MonsterEntity {
 				.createMutableAttribute(Attributes.ATTACK_DAMAGE, Config.MAGMA_MONSTER_ATTACK_DAMAGE.get()); //attack damage	
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean canSpawnHere(EntityType<EntityMagmaMonster> entity, IWorld world, SpawnReason spawn_reason, BlockPos pos, Random random) {
 		if(isDimBlacklisted(getDimensionRegName(((World) world).getDimensionKey())))
 			return false;
@@ -193,7 +194,7 @@ public class EntityMagmaMonster extends MonsterEntity {
 	public void tick() {
 		super.tick();
 		if (getEntityWorld().isRemote && getEntityWorld().getGameTime() % 40 == 0 && getMolten())
-			lavaParticles(getEntityWorld(), getPosX(), getPosY() + 1.3D, getPosZ(), rand);
+			lavaParticles(getPosX(), getPosY() + 1.3D, getPosZ(), rand);
 
 		if (!getEntityWorld().isRemote) {
 			if (getMolten() && getMoltenTimer() < 50)
@@ -205,8 +206,8 @@ public class EntityMagmaMonster extends MonsterEntity {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public void lavaParticles(World world, double x, double y, double z, Random rand) {
-		ClientParticles.spawnCustomParticle("lava", getEntityWorld(), x, y, z, 0F, 0F, 0F);
+	public void lavaParticles(double x, double y, double z, Random rand) {
+		ClientParticles.spawnCustomParticle("lava", x, y, z, 0F, 0F, 0F);
 	}
 
 	public void changeParticles(Entity entity, float x, float y, float z, byte type) {
