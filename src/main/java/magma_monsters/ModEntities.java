@@ -10,7 +10,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -28,7 +27,7 @@ public class ModEntities {
 		MAGMA_MONSTER_GRUNT = EntityType.Builder.of(EntityMagmaMonsterGrunt::new, MobCategory.MONSTER).fireImmune().sized(0.5F, 0.9F).build(getEntityResource("magma_monster_grunt").toString());
 		SpawnPlacements.register(MAGMA_MONSTER_GRUNT, SpawnPlacements.Type.IN_LAVA, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EntityMagmaMonsterGrunt::canSpawnHere);
 	}
-	
+
 	@SubscribeEvent
 	public static void registerEntities(RegistryEvent.Register<EntityType<?>> e) {
 		final IForgeRegistry<EntityType<?>> registry = e.getRegistry();
@@ -45,17 +44,11 @@ public class ModEntities {
 				new ForgeSpawnEggItem(()-> MAGMA_MONSTER_GRUNT, 0xFF0000, 0x06B900, new Item.Properties().tab(MagmaMonsters.TAB)).setRegistryName(Reference.MOD_ID, "magma_monster_grunt_spawn_egg"));
 	}
 
-    @SubscribeEvent
-    public static void entityAttributeCreationEvent(EntityAttributeCreationEvent event) {
-    	event.put(MAGMA_MONSTER, EntityMagmaMonster.createAttributes().build());
-    	event.put(MAGMA_MONSTER_GRUNT, EntityMagmaMonsterGrunt.createAttributes().build());
-    }
-    
-	public static void registerEntityAttributes() {
-	//	GlobalEntityTypeAttributes.put(MAGMA_MONSTER, EntityMagmaMonster.createAttributes());
-	//	GlobalEntityTypeAttributes.put(MAGMA_MONSTER_GRUNT, EntityMagmaMonsterGrunt.createAttributes());
+/*	public static void registerEntityAttributes(EntityAttributeCreationEvent event) {
+		GlobalEntityTypeAttributes.put(MAGMA_MONSTER, EntityMagmaMonster.createAttributes());
+		GlobalEntityTypeAttributes.put(MAGMA_MONSTER_GRUNT, EntityMagmaMonsterGrunt.createAttributes());
 	}
-
+*/
 	private static ResourceLocation getEntityResource(String entityName) {
 		return new ResourceLocation(Reference.MOD_ID, entityName);
 	}

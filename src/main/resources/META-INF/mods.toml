@@ -6,7 +6,7 @@
 # The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
 modLoader="javafml" #mandatory
 # A version range to match for said mod loader - for regular FML @Mod it will be the forge version
-loaderVersion="[35,)" #mandatory
+loaderVersion="[38,)" #mandatory
 license="All rights reserved"
 issueTrackerURL="https://github.com/vadis365/MagmaMonsters/issues"
 displayURL="https://github.com/vadis365/MagmaMonsters"
@@ -15,7 +15,7 @@ displayURL="https://github.com/vadis365/MagmaMonsters"
     # The modid of the mod
     modId="magma_monsters" #mandatory
     # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-    version="0.5.3" #mandatory
+    version="0.6.0" #mandatory
      # A display name for the mod
     displayName="MagmaMonsters" #mandatory
     credits="Thanks to Shin00w for creepy sounds." #optional
@@ -31,7 +31,7 @@ A Mod that adds some Magma Monsters.
     # Does this dependency have to exist - if not, ordering below must be specified
     mandatory=true #mandatory
     # The version range of the dependency
-    versionRange="[35,)" #mandatory
+    versionRange="[38,)" #mandatory
     # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
@@ -40,6 +40,6 @@ A Mod that adds some Magma Monsters.
 [[dependencies.magma_monsters]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.4,1.17]"
+    versionRange="[1.18,1.19]"
     ordering="NONE"
     side="BOTH"
