@@ -1,61 +1,70 @@
 package magma_monsters.client.render;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexFormat;
 
+import magma_monsters.Reference;
 import magma_monsters.client.model.entity.ModelMagmaMonsterGrunt;
 import magma_monsters.entities.EntityMagmaMonsterGrunt;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderState;
-import net.minecraft.client.renderer.RenderState.TransparencyState;
+import net.minecraft.client.model.geom.EntityModelSet;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.RenderStateShard.CullStateShard;
+import net.minecraft.client.renderer.RenderStateShard.LightmapStateShard;
+import net.minecraft.client.renderer.RenderStateShard.OverlayStateShard;
+import net.minecraft.client.renderer.RenderStateShard.TransparencyStateShard;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.IEntityRenderer;
-import net.minecraft.client.renderer.entity.layers.LayerRenderer;
+import net.minecraft.client.renderer.entity.RenderLayerParent;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class LayerMagmaMonsterGrunt extends LayerRenderer<EntityMagmaMonsterGrunt, ModelMagmaMonsterGrunt<EntityMagmaMonsterGrunt>> {
+public class LayerMagmaMonsterGrunt extends RenderLayer<EntityMagmaMonsterGrunt, ModelMagmaMonsterGrunt<EntityMagmaMonsterGrunt>> {
     private static final ResourceLocation LIGHTING_TEXTURE = new ResourceLocation("magma_monsters:textures/entity/magma_monster_flow.png");
-    private final ModelMagmaMonsterGrunt<EntityMagmaMonsterGrunt> monsterModel = new ModelMagmaMonsterGrunt<>();
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(Reference.MOD_ID, "modelmagmamonstergrunt"), "flow");
+    private final ModelMagmaMonsterGrunt<EntityMagmaMonsterGrunt> monsterModel;
 
-    public LayerMagmaMonsterGrunt(IEntityRenderer<EntityMagmaMonsterGrunt, ModelMagmaMonsterGrunt<EntityMagmaMonsterGrunt>> entity) {
+    public LayerMagmaMonsterGrunt(RenderLayerParent<EntityMagmaMonsterGrunt, ModelMagmaMonsterGrunt<EntityMagmaMonsterGrunt>> entity, EntityModelSet modelSet) {
     	super(entity);
+    	this.monsterModel = new ModelMagmaMonsterGrunt<>(modelSet.bakeLayer(LAYER_LOCATION));
     }
 
-    @Override
-	public void render(MatrixStack matrix, IRenderTypeBuffer buffer, int packedLight, EntityMagmaMonsterGrunt entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-		float f = (float) entity.ticksExisted + partialTicks;
-		monsterModel.eyes.showModel = false;
-		monsterModel.ltooth.showModel = false;
-		monsterModel.rtooth.showModel = false;
-		monsterModel.backLumpMid.showModel = false;
-		monsterModel.backLumpBot.showModel = false;
-		monsterModel.backLumpTop.showModel = false;
-		monsterModel.headTop.showModel = false;
-		monsterModel.headCrest.showModel = false;
-		monsterModel.rightTuskStart.showModel = false;
-		monsterModel.rightTuskEnd.showModel = false;
-		monsterModel.leftTuskStart.showModel = false;
-		monsterModel.leftTuskEnd.showModel = false;
-		monsterModel.setLivingAnimations(entity, limbSwing, limbSwingAmount, partialTicks);
-		monsterModel.setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-		monsterModel.render(matrix, buffer.getBuffer(getLavaOverlay(LIGHTING_TEXTURE, 0, -f * 0.004F)), packedLight, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, (float)entity.getMoltenTimer() * 0.02F);
+	@Override
+	public void render(PoseStack matrix, MultiBufferSource buffer, int packedLight, EntityMagmaMonsterGrunt entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+		float f = (float) entity.tickCount + partialTicks;
+		monsterModel.root().getChild("eyes").visible = false;
+		monsterModel.root().getChild("ltooth").visible = false;
+		monsterModel.root().getChild("rtooth").visible = false;
+		monsterModel.root().getChild("backLumpMid").visible = false;
+		monsterModel.root().getChild("backLumpBot").visible = false;
+		monsterModel.root().getChild("backLumpTop").visible = false;
+		monsterModel.root().getChild("headTop").visible = false;
+		monsterModel.root().getChild("headCrest").visible = false;
+		monsterModel.root().getChild("rightTuskStart").visible = false;
+		monsterModel.root().getChild("rightTuskEnd").visible = false;
+		monsterModel.root().getChild("leftTuskStart").visible = false;
+		monsterModel.root().getChild("leftTuskEnd").visible = false;
+		monsterModel.prepareMobModel(entity, limbSwing, limbSwingAmount, partialTicks);
+		monsterModel.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+		monsterModel.renderToBuffer(matrix, buffer.getBuffer(getLavaOverlay(LIGHTING_TEXTURE, 0, -f * 0.004F)), packedLight, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, (float)entity.getMoltenTimer() * 0.02F);
 	}
 
 	public static RenderType getLavaOverlay(ResourceLocation locationIn, float uIn, float vIn) {
-		RenderType.State renderTypeState = RenderType.State.getBuilder().texture(new RenderState.TextureState(locationIn, false, false)).texturing(new RenderState.OffsetTexturingState(uIn, vIn)).transparency(new TransparencyState("translucent_transparency", () -> {
+		RenderType.CompositeState renderTypeState = RenderType.CompositeState.builder().setTextureState(new RenderStateShard.TextureStateShard(locationIn, false, false)).setTexturingState(new RenderStateShard.OffsetTexturingStateShard(uIn, vIn)).setTransparencyState(new TransparencyStateShard("translucent_transparency", () -> {
 		      RenderSystem.enableBlend();
 		      RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 		   }, () -> {
 		      RenderSystem.disableBlend();
 		      RenderSystem.defaultBlendFunc();
-		   })).diffuseLighting(new RenderState.DiffuseLightingState(true)).cull(new RenderState.CullState(false)).lightmap(new RenderState.LightmapState(false)).overlay(new RenderState.OverlayState(true)).build(true);
+		   })).setLightmapState(new LightmapStateShard(true)).setCullState(new CullStateShard(false)).setLightmapState(new LightmapStateShard(false)).setOverlayState(new OverlayStateShard(true)).createCompositeState(false);
 		
-		return RenderType.makeType("lava_overlay", DefaultVertexFormats.ENTITY, 7, 256, false, true, renderTypeState);
+		return RenderType.create("lava_overlay", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true, renderTypeState);
 	}
 }
