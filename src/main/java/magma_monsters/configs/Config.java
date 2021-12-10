@@ -4,15 +4,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 
 import magma_monsters.Reference;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 
 @Mod.EventBusSubscriber(modid = Reference.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Config {
@@ -133,16 +132,7 @@ public class Config {
                 .build();
 
         configData.load();
-        spec.setConfig(configData);
-    }
-
-    @SubscribeEvent
-    public static void onLoad(final ModConfig.Loading configEvent) {
-
-    }
-
-    @SubscribeEvent
-    public static void onReload(final ModConfig.Reloading configEvent) {
+        spec.setConfig((CommentedConfig)configData);
     }
 }
 

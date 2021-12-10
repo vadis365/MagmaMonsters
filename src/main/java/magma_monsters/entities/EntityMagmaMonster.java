@@ -9,135 +9,134 @@ import magma_monsters.ModSounds;
 import magma_monsters.configs.Config;
 import magma_monsters.network.QuenchMessage;
 import magma_monsters.particles.ClientParticles;
-import net.minecraft.block.AbstractFireBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.ai.goal.HurtByTargetGoal;
-import net.minecraft.entity.ai.goal.LookAtGoal;
-import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
-import net.minecraft.entity.monster.MonsterEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.entity.projectile.SmallFireballEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.pathfinding.PathNodeType;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Direction;
-import net.minecraft.util.IndirectEntityDamageSource;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.IndirectEntityDamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.SmallFireball;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.BaseFireBlock;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.network.NetworkDirection;
 
-public class EntityMagmaMonster extends MonsterEntity {
-	private static final DataParameter<Boolean> IS_MOLTEN = EntityDataManager.<Boolean>createKey(EntityMagmaMonster.class, DataSerializers.BOOLEAN);
-	private static final DataParameter<Integer> MOLTEN_TIMER = EntityDataManager.<Integer>createKey(EntityMagmaMonster.class, DataSerializers.VARINT);
+public class EntityMagmaMonster extends Monster {
+	private static final EntityDataAccessor<Boolean> IS_MOLTEN = SynchedEntityData.defineId(EntityMagmaMonster.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Integer> MOLTEN_TIMER = SynchedEntityData.defineId(EntityMagmaMonster.class, EntityDataSerializers.INT);
 	protected Goal aiFireballAttack;
 
-	public EntityMagmaMonster(EntityType<? extends EntityMagmaMonster> type, World world) {
-		super(type, world);
-		setPathPriority(PathNodeType.LAVA, 8.0F);
-		setPathPriority(PathNodeType.DANGER_FIRE, 0.0F);
-		setPathPriority(PathNodeType.DAMAGE_FIRE, 0.0F);
-		experienceValue = 10;
+	public EntityMagmaMonster(EntityType<? extends EntityMagmaMonster> type, Level level) {
+		super(type, level);
+		setPathfindingMalus(BlockPathTypes.LAVA, 8.0F);
+		setPathfindingMalus(BlockPathTypes.DANGER_FIRE, 0.0F);
+		setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, 0.0F);
+		xpReward = 10;
 	}
 
 	@Override
-	protected void registerData() {
-		super.registerData();
-		dataManager.register(IS_MOLTEN, true);
-		dataManager.register(MOLTEN_TIMER, 50);
+	protected void defineSynchedData() {
+		super.defineSynchedData();
+		entityData.define(IS_MOLTEN, true);
+		entityData.define(MOLTEN_TIMER, 50);
 	}
 
 	public void setMolten(boolean molten) {
-		dataManager.set(IS_MOLTEN, molten);
+		entityData.set(IS_MOLTEN, molten);
 	}
 
 	public boolean getMolten() {
-		return dataManager.get(IS_MOLTEN).booleanValue();
+		return entityData.get(IS_MOLTEN).booleanValue();
 	}
 
 	public void setMoltenTimer(int moltenTimer) {
-		dataManager.set(MOLTEN_TIMER, moltenTimer);
+		entityData.set(MOLTEN_TIMER, moltenTimer);
 	}
 
 	public int getMoltenTimer() {
-		return dataManager.get(MOLTEN_TIMER).intValue();
+		return entityData.get(MOLTEN_TIMER).intValue();
 	}
 
 	@Override
-	public void writeAdditional(CompoundNBT compound) {
-		super.writeAdditional(compound);
+	public void addAdditionalSaveData(CompoundTag compound) {
+		super.addAdditionalSaveData(compound);
 		compound.putBoolean("molten", getMolten());
 		compound.putInt("molten_timer", getMoltenTimer());
 	}
 
 	@Override
-	public void readAdditional(CompoundNBT compound) {
-		super.readAdditional(compound);
-		dataManager.set(IS_MOLTEN, compound.getBoolean("molten"));
-		dataManager.set(MOLTEN_TIMER, compound.getInt("molten_timer"));
+	public void readAdditionalSaveData(CompoundTag compound) {
+		super.readAdditionalSaveData(compound);
+		entityData.set(IS_MOLTEN, compound.getBoolean("molten"));
+		entityData.set(MOLTEN_TIMER, compound.getInt("molten_timer"));
 	}
 
 	@Override
 	protected void registerGoals() {
 		aiFireballAttack = new EntityMagmaMonster.AIFireballAttack(this);
-		goalSelector.addGoal(0, new SwimGoal(this));
+		goalSelector.addGoal(0, new FloatGoal(this));
 		goalSelector.addGoal(1, aiFireballAttack);
 		goalSelector.addGoal(2, new EntityMagmaMonster.AttackGoal(this));
-		goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 1D));
-		goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 8.0F));
-		goalSelector.addGoal(6, new LookRandomlyGoal(this));
-		targetSelector.addGoal(0, (new HurtByTargetGoal(this)).setCallsForHelp(EntityMagmaMonster.class).setCallsForHelp(EntityMagmaMonsterGrunt.class));
-		targetSelector.addGoal(1, new EntityMagmaMonster.TargetGoal<>(this, PlayerEntity.class));
+		goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+		goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
+		goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+		targetSelector.addGoal(0, (new HurtByTargetGoal(this)).setAlertOthers(EntityMagmaMonster.class).setAlertOthers(EntityMagmaMonsterGrunt.class));
+		targetSelector.addGoal(1, new EntityMagmaMonster.TargetGoal<>(this, Player.class));
 	}
 
-	public static AttributeModifierMap.MutableAttribute registerAttributes() {
-		return MonsterEntity.func_234295_eP_()
-				.createMutableAttribute(Attributes.MAX_HEALTH, Config.MAGMA_MONSTER_HEALTH.get()) //health
-				.createMutableAttribute(Attributes.FOLLOW_RANGE, 32D) //follow range
-				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.23000000417232513D) //move speed
-				.createMutableAttribute(Attributes.ATTACK_DAMAGE, Config.MAGMA_MONSTER_ATTACK_DAMAGE.get()); //attack damage	
+	public static AttributeSupplier.Builder createAttributes() {
+		return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, Config.MAGMA_MONSTER_HEALTH.get()) //health
+				.add(Attributes.FOLLOW_RANGE, 32D) //follow range
+				.add(Attributes.MOVEMENT_SPEED, 0.23000000417232513D) //move speed
+				.add(Attributes.ATTACK_DAMAGE, Config.MAGMA_MONSTER_ATTACK_DAMAGE.get()); //attack damage	
 	}
 
 	@SuppressWarnings("deprecation")
-	public static boolean canSpawnHere(EntityType<EntityMagmaMonster> entity, IWorld world, SpawnReason spawn_reason, BlockPos pos, Random random) {
-		if(isDimBlacklisted(getDimensionRegName(((World) world).getDimensionKey())))
+	public static boolean canSpawnHere(EntityType<EntityMagmaMonster> entity, LevelAccessor level, MobSpawnType spawn_reason, BlockPos pos, Random random) {
+		if(isDimBlacklisted(getDimensionRegName(((Level) level).dimension())))
 			return false;
-		BlockPos.Mutable blockPosMutable = pos.toMutable();
+		BlockPos.MutableBlockPos blockPosMutable = pos.mutable();
 		do {
 			blockPosMutable.move(Direction.UP);
-		} while (world.getFluidState(blockPosMutable).isTagged(FluidTags.LAVA));
-		return world.getBlockState(blockPosMutable).isAir() && blockPosMutable.getY() <= Config.MAGMA_MONSTER_SPAWN_Y_HEIGHT.get();
+		} while (level.getFluidState(blockPosMutable).is(FluidTags.LAVA));
+		return level.getBlockState(blockPosMutable).isAir() && blockPosMutable.getY() <= Config.MAGMA_MONSTER_SPAWN_Y_HEIGHT.get();
 	}
 
 	public static boolean isDimBlacklisted(String dimensionIn) {
@@ -146,13 +145,13 @@ public class EntityMagmaMonster extends MonsterEntity {
 		return false;
 	}
 
-	public static String getDimensionRegName(RegistryKey<World> reg) {
-		return reg.getLocation().toString();
+	public static String getDimensionRegName(ResourceKey<Level> reg) {
+		return reg.location().toString();
 	}
 
 	@Override
-	public float getBlockPathWeight(BlockPos pos, IWorldReader worldIn) {
-		if (worldIn.getBlockState(pos).getFluidState().isTagged(FluidTags.LAVA)) {
+	public float getWalkTargetValue(BlockPos pos, LevelReader level) {
+		if (level.getBlockState(pos).getFluidState().is(FluidTags.LAVA)) {
 			return 10.0F;
 		} else {
 			return this.isInLava() ? Float.NEGATIVE_INFINITY : 0.0F;
@@ -160,8 +159,8 @@ public class EntityMagmaMonster extends MonsterEntity {
 	}
 
 	@Override
-    public boolean isNotColliding(IWorldReader world) {
-        return world.checkNoEntityCollision(this);
+    public boolean checkSpawnObstruction(LevelReader level) {
+        return level.isUnobstructed(this);
     }
 
 	@Override
@@ -181,22 +180,22 @@ public class EntityMagmaMonster extends MonsterEntity {
 
 	@SuppressWarnings("deprecation")
 	@Override
-	protected void dropSpecialItems(DamageSource source, int looting, boolean recentlyHitIn) {
-		int randomAmount = 1 + rand.nextInt(2 + looting);
+	protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHitIn) {
+		int randomAmount = 1 + random.nextInt(2 + looting);
 		for (int count = 0; count < randomAmount; ++count)
 			if(getMolten())
-				entityDropItem(new ItemStack(rand.nextBoolean() ? Items.BLAZE_POWDER : Items.MAGMA_CREAM), 0F);
+				spawnAtLocation(new ItemStack(random.nextBoolean() ? Items.BLAZE_POWDER : Items.MAGMA_CREAM), 0F);
 			else
-				entityDropItem(new ItemStack(Item.getItemFromBlock(Blocks.OBSIDIAN)), 0F);
+				spawnAtLocation(new ItemStack(Item.byBlock(Blocks.OBSIDIAN)), 0F);
 	}
 
 	@Override
 	public void tick() {
 		super.tick();
-		if (getEntityWorld().isRemote && getEntityWorld().getGameTime() % 40 == 0 && getMolten())
-			lavaParticles(getPosX(), getPosY() + 1.3D, getPosZ(), rand);
+		if (level.isClientSide && level.getGameTime() % 40 == 0 && getMolten())
+			lavaParticles(getX(), getY() + 1.3D, getZ(), random);
 
-		if (!getEntityWorld().isRemote) {
+		if (!level.isClientSide) {
 			if (getMolten() && getMoltenTimer() < 50)
 				setMoltenTimer(getMoltenTimer() + 1);
 
@@ -211,60 +210,60 @@ public class EntityMagmaMonster extends MonsterEntity {
 	}
 
 	public void changeParticles(Entity entity, float x, float y, float z, byte type) {
-		Iterator<? extends PlayerEntity> players = entity.getEntityWorld().getPlayers().iterator();
+		Iterator<? extends Player> players = entity.level.players().iterator();
 		while (players.hasNext()) {
-			PlayerEntity playersNear = players.next();
-			if ((playersNear).getDistanceSq(entity) < 1024.0D) {
-				MagmaMonsters.NETWORK_WRAPPER.sendTo(new QuenchMessage(x, y, z, type), ((ServerPlayerEntity) playersNear).connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+			Player playersNear = players.next();
+			if ((playersNear).distanceToSqr(entity) < 1024.0D) {
+				MagmaMonsters.NETWORK_WRAPPER.sendTo(new QuenchMessage(x, y, z, type), ((ServerPlayer) playersNear).connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
 			}
 		}
 	}
 
 	@Override
-	  public void livingTick() {
-		super.livingTick();
-		if (!getEntityWorld().isRemote) {
-			if (isWet() && !isInLava() && getMolten()) {
-		        getEntityWorld().playSound(null, getPosX(), getPosY(), getPosZ(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.HOSTILE, 1F, 2.6F + (getEntityWorld().rand.nextFloat() - getEntityWorld().rand.nextFloat()) * 0.8F);
-		        changeParticles(this, (float)getPosX(), (float)getPosY() + 0.9F, (float)getPosZ(), (byte) 0);
+	  public void aiStep() {
+		super.aiStep();
+		if (!level.isClientSide) {
+			if (isInWaterOrRain() && !isInLava() && getMolten()) {
+		        level.playSound(null, getX(), getY(), getZ(), SoundEvents.LAVA_EXTINGUISH, SoundSource.HOSTILE, 1F, 2.6F + (level.random.nextFloat() - level.random.nextFloat()) * 0.8F);
+		        changeParticles(this, (float)getX(), (float)getY() + 0.9F, (float)getZ(), (byte) 0);
 				setMolten(false);
 				getAttribute(Attributes.ARMOR).setBaseValue(10D);
 			}
 
 			if (isInLava() && !getMolten()) {
-		        getEntityWorld().playSound(null, getPosX(), getPosY(), getPosZ(), SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.HOSTILE, 1F, 0.6F + (getEntityWorld().rand.nextFloat() - getEntityWorld().rand.nextFloat()) * 0.8F);
-		        changeParticles(this, (float)getPosX(), (float)getPosY() + 0.9F, (float)getPosZ(), (byte) 1);
+		        level.playSound(null, getX(), getY(), getZ(), SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 1F, 0.6F + (level.random.nextFloat() - level.random.nextFloat()) * 0.8F);
+		        changeParticles(this, (float)getX(), (float)getY() + 0.9F, (float)getZ(), (byte) 1);
 				setMolten(true);
 				getAttribute(Attributes.ARMOR).setBaseValue(0D);
 			}
 
-			if (rand.nextInt(40) == 0 && Config.MAGMA_MONSTER_BLOCK_FIRE.get() && getMolten()) {
-				int i = MathHelper.floor(getPosX());
-				int j = MathHelper.floor(getPosY());
-				int k = MathHelper.floor(getPosZ());
+			if (random.nextInt(40) == 0 && Config.MAGMA_MONSTER_BLOCK_FIRE.get() && getMolten()) {
+				int i = Mth.floor(getX());
+				int j = Mth.floor(getY());
+				int k = Mth.floor(getZ());
 				for (int l = 0; l < 4; ++l) {
-					i = MathHelper.floor(getPosX() + (double) ((float) (l % 2 * 2 - 1) * 0.25F));
-					j = MathHelper.floor(getPosY());
-					k = MathHelper.floor(getPosZ() + (double) ((float) (l / 2 % 2 * 2 - 1) * 0.25F));
+					i = Mth.floor(getX() + (double) ((float) (l % 2 * 2 - 1) * 0.25F));
+					j = Mth.floor(getY());
+					k = Mth.floor(getZ() + (double) ((float) (l / 2 % 2 * 2 - 1) * 0.25F));
 					BlockPos blockpos = new BlockPos(i, j, k);
-					BlockState blockstate = AbstractFireBlock.getFireForPlacement(getEntityWorld(), blockpos);
-					if (getEntityWorld().getBlockState(blockpos).getMaterial() == Material.AIR && blockstate.isValidPosition(getEntityWorld(), blockpos))
-						getEntityWorld().setBlockState(blockpos, blockstate, 11);
+					BlockState blockstate = BaseFireBlock.getState(level, blockpos);
+					if (level.getBlockState(blockpos).getMaterial() == Material.AIR && BaseFireBlock.canBePlacedAt(level, blockpos, Direction.DOWN))
+						level.setBlock(blockpos, blockstate, 11);
 				}
 			}
 		}
 	}
 
 	@Override
-	public boolean attackEntityAsMob(Entity entity) {
-		if (canEntityBeSeen(entity)) {
+	public boolean doHurtTarget(Entity entity) {
+		if (hasLineOfSight(entity)) {
 			int modifier =  !getMolten() ? 2 : 1;
-			boolean hasHitTarget = entity.attackEntityFrom(DamageSource.causeMobDamage(this), (float) ((int) this.getAttribute(Attributes.ATTACK_DAMAGE).getBaseValue() * modifier));
+			boolean hasHitTarget = entity.hurt(DamageSource.mobAttack(this), (float) ((int) this.getAttribute(Attributes.ATTACK_DAMAGE).getBaseValue() * modifier));
 			if (hasHitTarget) {
 				if (entity instanceof LivingEntity && !getMolten()) {
 					int duration = Config.MAGMA_MONSTER_SLOWNESS_EFFECT_DURATION.get();
 					if (duration > 0)
-						((LivingEntity) entity).addPotionEffect(new EffectInstance(Effects.SLOWNESS, duration * 20, 0));
+						((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration * 20, 0));
 				}
 			}
 			return hasHitTarget;
@@ -273,12 +272,12 @@ public class EntityMagmaMonster extends MonsterEntity {
 	}
 
 	@Override
-	public boolean attackEntityFrom(DamageSource source, float damage) {
+	public boolean hurt(DamageSource source, float damage) {
 		if (source instanceof IndirectEntityDamageSource && !getMolten()) {
-			getEntityWorld().playSound((PlayerEntity) null, getPosX(), getPosY(), getPosZ(), SoundEvents.BLOCK_STONE_BUTTON_CLICK_OFF, SoundCategory.HOSTILE, 2.5F, 3F);
+			level.playSound((Player) null, getX(), getY(), getZ(), SoundEvents.STONE_BUTTON_CLICK_OFF, SoundSource.HOSTILE, 2.5F, 3F);
 			return false;
 		}
-		return super.attackEntityFrom(source, damage);
+		return super.hurt(source, damage);
 	}
 
 	static class TargetGoal<T extends LivingEntity> extends NearestAttackableTargetGoal<T> {
@@ -294,7 +293,7 @@ public class EntityMagmaMonster extends MonsterEntity {
 
 		@Override
 		protected double getAttackReachSqr(LivingEntity attackTarget) {
-			return (double) (4.0F + attackTarget.getWidth());
+			return (double) (4.0F + attackTarget.getBbWidth());
 		}
 	}
 
@@ -305,37 +304,37 @@ public class EntityMagmaMonster extends MonsterEntity {
 
 		public AIFireballAttack(EntityMagmaMonster magma_monsterIn) {
 			magma_monster = magma_monsterIn;
-			setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+			setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
 		}
 
 		@Override
-		public boolean shouldExecute() {
-			LivingEntity livingentity = magma_monster.getAttackTarget();
+		public boolean canUse() {
+			LivingEntity livingentity = magma_monster.getTarget();
 			return livingentity != null && livingentity.isAlive() && magma_monster.getMolten();
 		}
 
 		@Override
-		public void startExecuting() {
+		public void start() {
 			attackStep = 0;
 		}
 
 		@Override
 		 public void tick() {
 			--attackTime;
-			LivingEntity livingentity = magma_monster.getAttackTarget();
-			double d0 = magma_monster.getDistanceSq(livingentity);
+			LivingEntity livingentity = magma_monster.getTarget();
+			double d0 = magma_monster.distanceToSqr(livingentity);
 
 			if (d0 < 4.0D) {
 				if (attackTime <= 0) {
 					attackTime = 20;
-					magma_monster.attackEntityAsMob(livingentity);
+					magma_monster.doHurtTarget(livingentity);
 				}
 
-				magma_monster.getMoveHelper().setMoveTo(livingentity.getPosX(), livingentity.getPosY(), livingentity.getPosZ(), 1.0D);
+				magma_monster.getMoveControl().setWantedPosition(livingentity.getX(), livingentity.getY(), livingentity.getZ(), 1.0D);
 			} else if (d0 < 256.0D && magma_monster.getMolten()) {
-				double d1 = livingentity.getPosX() - magma_monster.getPosX();
-				double d2 = livingentity.getBoundingBox().minY + (double) (livingentity.getHeight() / 2.0F) - (magma_monster.getPosY() + (double) (magma_monster.getHeight() / 2.0F));
-				double d3 = livingentity.getPosZ() - magma_monster.getPosZ();
+				double d1 = livingentity.getX() - magma_monster.getX();
+				double d2 = livingentity.getBoundingBox().minY + (double) (livingentity.getBbHeight() / 2.0F) - (magma_monster.getY() + (double) (magma_monster.getBbHeight() / 2.0F));
+				double d3 = livingentity.getZ() - magma_monster.getZ();
 
 				if (attackTime <= 0) {
 					++attackStep;
@@ -350,20 +349,20 @@ public class EntityMagmaMonster extends MonsterEntity {
 					}
 
 					if (attackStep > 1) {
-						float f = MathHelper.sqrt(MathHelper.sqrt(d0)) * 0.5F;
-						magma_monster.getEntityWorld().playEvent((PlayerEntity) null, 1018, magma_monster.getPosition(), 0);
+						double f = Math.sqrt(Math.sqrt(d0)) * 0.5D;
+						magma_monster.level.levelEvent((Player) null, 1018, magma_monster.blockPosition(), 0);
 
 						for (int i = 0; i < 1; ++i) {
-							SmallFireballEntity smallfireballentity = new SmallFireballEntity(magma_monster.getEntityWorld(), magma_monster, d1 + magma_monster.getRNG().nextGaussian() * (double) f, d2, d3 + magma_monster.getRNG().nextGaussian() * (double) f);
-							smallfireballentity.setPosition(smallfireballentity.getPosX(), magma_monster.getPosY() + (double) (magma_monster.getHeight() / 2.0F) + 0.5D, smallfireballentity.getPosZ());
-							magma_monster.getEntityWorld().addEntity(smallfireballentity);
+							SmallFireball smallfireballentity = new SmallFireball(magma_monster.level, magma_monster, d1 + magma_monster.getRandom().nextGaussian() * (double) f, d2, d3 + magma_monster.getRandom().nextGaussian() * (double) f);
+							smallfireballentity.setPos(smallfireballentity.getX(), magma_monster.getY() + (double) (magma_monster.getBbHeight() / 2.0F) + 0.5D, smallfireballentity.getZ());
+							magma_monster.level.addFreshEntity(smallfireballentity);
 						}
 					}
 				}
 
-				magma_monster.getLookController().setLookPositionWithEntity(livingentity, 10.0F, 10.0F);
-				magma_monster.getNavigator().clearPath();
-				magma_monster.getMoveHelper().setMoveTo(livingentity.getPosX(), livingentity.getPosY(), livingentity.getPosZ(), 1.0D);
+				magma_monster.getLookControl().setLookAt(livingentity, 10.0F, 10.0F);
+				magma_monster.getNavigation().isDone();
+				magma_monster.getMoveControl().setWantedPosition(livingentity.getX(), livingentity.getY(), livingentity.getZ(), 1.0D);
 			}
 
 			super.tick();

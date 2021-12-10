@@ -3,14 +3,14 @@ package magma_monsters;
 import magma_monsters.entities.EntityMagmaMonster;
 import magma_monsters.entities.EntityMagmaMonsterGrunt;
 import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntitySpawnPlacementRegistry;
-import net.minecraft.entity.EntitySpawnPlacementRegistry.PlacementType;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
-import net.minecraft.item.Item;
-import net.minecraft.item.SpawnEggItem;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.gen.Heightmap;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -23,11 +23,11 @@ public class ModEntities {
 
 	public static void init() {
 
-		MAGMA_MONSTER = EntityType.Builder.create(EntityMagmaMonster::new, EntityClassification.MONSTER).immuneToFire().size(0.90F, 1.75F).build(getEntityResource("magma_monster").toString());
-		EntitySpawnPlacementRegistry.register(MAGMA_MONSTER, PlacementType.IN_LAVA, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, EntityMagmaMonster::canSpawnHere);
+		MAGMA_MONSTER = EntityType.Builder.of(EntityMagmaMonster::new, MobCategory.MONSTER).immuneToFire().size(0.90F, 1.75F).build(getEntityResource("magma_monster").toString());
+		SpawnPlacements.register(MAGMA_MONSTER, SpawnPlacements.Type.IN_LAVA, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EntityMagmaMonster::canSpawnHere);
 		
-		MAGMA_MONSTER_GRUNT = EntityType.Builder.create(EntityMagmaMonsterGrunt::new, EntityClassification.MONSTER).immuneToFire().size(0.5F, 0.9F).build(getEntityResource("magma_monster_grunt").toString());
-		EntitySpawnPlacementRegistry.register(MAGMA_MONSTER_GRUNT, PlacementType.IN_LAVA, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, EntityMagmaMonsterGrunt::canSpawnHere);
+		MAGMA_MONSTER_GRUNT = EntityType.Builder.of(EntityMagmaMonsterGrunt::new, MobCategory.MONSTER).immuneToFire().size(0.5F, 0.9F).build(getEntityResource("magma_monster_grunt").toString());
+		SpawnPlacements.register(MAGMA_MONSTER_GRUNT, SpawnPlacements.Type.IN_LAVA, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EntityMagmaMonsterGrunt::canSpawnHere);
 	}
 	
 	@SubscribeEvent
