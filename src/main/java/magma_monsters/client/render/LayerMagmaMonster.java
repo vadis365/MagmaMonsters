@@ -37,22 +37,21 @@ public class LayerMagmaMonster extends RenderLayer<EntityMagmaMonster, ModelMagm
     	this.monsterModel = new ModelMagmaMonster<>(modelSet.bakeLayer(LAYER_LOCATION));
     }
 
-	@Override
+    @Override
 	public void render(PoseStack matrix, MultiBufferSource buffer, int packedLight, EntityMagmaMonster entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
 		float f = (float) entity.tickCount + partialTicks;
-	/*	monsterModel.root().getChild("eyes").visible = false;
-		monsterModel.root().getChild("ltooth").visible = false;
-		monsterModel.root().getChild("rtooth").visible = false;
-		monsterModel.root().getChild("backLumpMid").visible = false;
-		monsterModel.root().getChild("backLumpBot").visible = false;
-		monsterModel.root().getChild("backLumpTop").visible = false;
-		monsterModel.root().getChild("headTop").visible = false;
-		monsterModel.root().getChild("headCrest").visible = false;
-		monsterModel.root().getChild("rightTuskStart").visible = false;
-		monsterModel.root().getChild("rightTuskEnd").visible = false;
-		monsterModel.root().getChild("leftTuskStart").visible = false;
-		monsterModel.root().getChild("leftTuskEnd").visible = false;
-		*/
+		monsterModel.eyes.visible = false;
+		monsterModel.ltooth.visible = false;
+		monsterModel.rtooth.visible = false;
+		monsterModel.backLumpMid.visible = false;
+		monsterModel.backLumpBot.visible = false;
+		monsterModel.backLumpTop.visible = false;
+		monsterModel.headTop.visible = false;
+		monsterModel.headCrest.visible = false;
+		monsterModel.rightTuskStart.visible = false;
+		monsterModel.rightTuskEnd.visible = false;
+		monsterModel.leftTuskStart.visible = false;
+		monsterModel.leftTuskEnd.visible = false;
 		monsterModel.prepareMobModel(entity, limbSwing, limbSwingAmount, partialTicks);
 		monsterModel.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
 		monsterModel.renderToBuffer(matrix, buffer.getBuffer(getLavaOverlay(LIGHTING_TEXTURE, 0, -f * 0.004F)), packedLight, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, (float)entity.getMoltenTimer() * 0.02F);

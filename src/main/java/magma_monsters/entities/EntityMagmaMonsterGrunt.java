@@ -1,7 +1,6 @@
 package magma_monsters.entities;
 
 import java.util.EnumSet;
-import java.util.Iterator;
 import java.util.Random;
 
 import magma_monsters.MagmaMonsters;
@@ -16,7 +15,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -56,7 +54,8 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor.TargetPoint;
 
 public class EntityMagmaMonsterGrunt extends Monster{
 	private static final EntityDataAccessor<Boolean> IS_MOLTEN = SynchedEntityData.defineId(EntityMagmaMonsterGrunt.class, EntityDataSerializers.BOOLEAN);
@@ -215,13 +214,7 @@ public class EntityMagmaMonsterGrunt extends Monster{
 	}
 
 	public void changeParticles(Entity entity, float x, float y, float z, byte type) {
-		Iterator<? extends Player> players = entity.level.players().iterator();
-		while (players.hasNext()) {
-			Player playersNear = players.next();
-			if ((playersNear).distanceToSqr(entity) < 1024.0D) {
-				MagmaMonsters.NETWORK_WRAPPER.sendTo(new QuenchMessage(x, y, z, type), ((ServerPlayer) playersNear).connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
-			}
-		}
+		MagmaMonsters.NETWORK_WRAPPER.send(PacketDistributor.NEAR.with(()-> new TargetPoint(x, y, z, 16, entity.level.dimension())), new QuenchMessage(x, y, z, type));
 	}
 
 	@Override

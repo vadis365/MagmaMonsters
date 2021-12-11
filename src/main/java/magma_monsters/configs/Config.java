@@ -4,7 +4,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 
@@ -132,7 +131,7 @@ public class Config {
                 .build();
 
         configData.load();
-        spec.setConfig((CommentedConfig)configData);
+        spec.setConfig(configData);
     }
 }
 

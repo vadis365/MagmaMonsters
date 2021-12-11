@@ -1,6 +1,7 @@
 package magma_monsters;
 
 import java.nio.file.Path;
+import java.util.Optional;
 
 import magma_monsters.configs.Config;
 import magma_monsters.network.QuenchMessage;
@@ -16,6 +17,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
@@ -48,12 +50,9 @@ public class MagmaMonsters {
 
 	private void setup(final FMLCommonSetupEvent event) {
 		MinecraftForge.EVENT_BUS.register(new ModSpawns());
-		//ModEntities.registerEntityAttributes();
-		NETWORK_WRAPPER.registerMessage(0, QuenchMessage.class, QuenchMessage::encode, QuenchMessage::new, QuenchMessage.Handler::handle);
+		NETWORK_WRAPPER.registerMessage(0, QuenchMessage.class, QuenchMessage::encode, QuenchMessage::new, QuenchMessage.Handler::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 	}
 
 	private void doClientStuff(final FMLClientSetupEvent event) {
-	//	EntityRenderers.register(ModEntities.MAGMA_MONSTER, RenderMagmaMonster::new);
-	//	EntityRenderers.register(ModEntities.MAGMA_MONSTER_GRUNT, RenderMagmaMonsterGrunt::new);
 	}
 }

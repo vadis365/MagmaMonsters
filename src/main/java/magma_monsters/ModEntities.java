@@ -36,7 +36,6 @@ public class ModEntities {
 		registry.register(MAGMA_MONSTER_GRUNT.setRegistryName(Reference.MOD_ID, "magma_monster_grunt"));
 	}
 
-	@SuppressWarnings({ "deprecation", "unchecked" })
 	@SubscribeEvent
 	public static void registerSpawnEggs(final RegistryEvent.Register<Item> event) {
 		init();
@@ -50,12 +49,7 @@ public class ModEntities {
     	event.put(ModEntities.MAGMA_MONSTER, EntityMagmaMonster.createAttributes().build());
     	event.put(ModEntities.MAGMA_MONSTER_GRUNT, EntityMagmaMonsterGrunt.createAttributes().build());
     }
-
-/*	public static void registerEntityAttributes(EntityAttributeCreationEvent event) {
-		GlobalEntityTypeAttributes.put(MAGMA_MONSTER, EntityMagmaMonster.createAttributes());
-		GlobalEntityTypeAttributes.put(MAGMA_MONSTER_GRUNT, EntityMagmaMonsterGrunt.createAttributes());
-	}
-*/
+	
 	private static ResourceLocation getEntityResource(String entityName) {
 		return new ResourceLocation(Reference.MOD_ID, entityName);
 	}

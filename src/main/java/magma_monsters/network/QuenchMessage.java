@@ -34,11 +34,10 @@ public class QuenchMessage {
 	}
 
 	public static class Handler {
-		@SuppressWarnings("static-access")
 		public static void handle(final QuenchMessage pkt, Supplier<NetworkEvent.Context> ctx) {
-		      DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> QuenchMessageClient.handlePacket(msg, ctx)));
-		      ctx.get().setPacketHandled(true);
-
+			if(ctx.get().getDirection().getReceptionSide().isClient()) 
+		      QuenchMessageClient.handlePacket(pkt, ctx);
+			ctx.get().setPacketHandled(true);
 		}
 	}
 }
