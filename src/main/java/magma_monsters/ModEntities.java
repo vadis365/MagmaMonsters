@@ -10,6 +10,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -43,6 +44,12 @@ public class ModEntities {
 				new ForgeSpawnEggItem(()-> MAGMA_MONSTER, 0xFF0000, 0x06B900, new Item.Properties().tab(MagmaMonsters.TAB)).setRegistryName(Reference.MOD_ID, "magma_monster_spawn_egg"),
 				new ForgeSpawnEggItem(()-> MAGMA_MONSTER_GRUNT, 0xFF0000, 0x06B900, new Item.Properties().tab(MagmaMonsters.TAB)).setRegistryName(Reference.MOD_ID, "magma_monster_grunt_spawn_egg"));
 	}
+
+	@SubscribeEvent
+    public static void entityAttributeCreationEvent(final EntityAttributeCreationEvent event) {
+    	event.put(ModEntities.MAGMA_MONSTER, EntityMagmaMonster.createAttributes().build());
+    	event.put(ModEntities.MAGMA_MONSTER_GRUNT, EntityMagmaMonsterGrunt.createAttributes().build());
+    }
 
 /*	public static void registerEntityAttributes(EntityAttributeCreationEvent event) {
 		GlobalEntityTypeAttributes.put(MAGMA_MONSTER, EntityMagmaMonster.createAttributes());

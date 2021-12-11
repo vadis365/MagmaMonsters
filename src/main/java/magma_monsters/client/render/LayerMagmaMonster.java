@@ -11,6 +11,7 @@ import magma_monsters.client.model.entity.ModelMagmaMonster;
 import magma_monsters.entities.EntityMagmaMonster;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderStateShard.CullStateShard;
@@ -28,7 +29,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class LayerMagmaMonster extends RenderLayer<EntityMagmaMonster, ModelMagmaMonster<EntityMagmaMonster>> {
     private static final ResourceLocation LIGHTING_TEXTURE = new ResourceLocation("magma_monsters:textures/entity/magma_monster_flow.png");
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(Reference.MOD_ID, "modelmagmamonster"), "flow");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(Reference.MOD_ID, "magma_monster"), "flow");
     private final ModelMagmaMonster<EntityMagmaMonster> monsterModel;
 
     public LayerMagmaMonster(RenderLayerParent<EntityMagmaMonster, ModelMagmaMonster<EntityMagmaMonster>> entity, EntityModelSet modelSet) {
@@ -39,7 +40,7 @@ public class LayerMagmaMonster extends RenderLayer<EntityMagmaMonster, ModelMagm
 	@Override
 	public void render(PoseStack matrix, MultiBufferSource buffer, int packedLight, EntityMagmaMonster entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
 		float f = (float) entity.tickCount + partialTicks;
-		monsterModel.root().getChild("eyes").visible = false;
+	/*	monsterModel.root().getChild("eyes").visible = false;
 		monsterModel.root().getChild("ltooth").visible = false;
 		monsterModel.root().getChild("rtooth").visible = false;
 		monsterModel.root().getChild("backLumpMid").visible = false;
@@ -51,13 +52,14 @@ public class LayerMagmaMonster extends RenderLayer<EntityMagmaMonster, ModelMagm
 		monsterModel.root().getChild("rightTuskEnd").visible = false;
 		monsterModel.root().getChild("leftTuskStart").visible = false;
 		monsterModel.root().getChild("leftTuskEnd").visible = false;
+		*/
 		monsterModel.prepareMobModel(entity, limbSwing, limbSwingAmount, partialTicks);
 		monsterModel.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
 		monsterModel.renderToBuffer(matrix, buffer.getBuffer(getLavaOverlay(LIGHTING_TEXTURE, 0, -f * 0.004F)), packedLight, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, (float)entity.getMoltenTimer() * 0.02F);
 	}
 
 	public static RenderType getLavaOverlay(ResourceLocation locationIn, float uIn, float vIn) {
-		RenderType.CompositeState renderTypeState = RenderType.CompositeState.builder().setTextureState(new RenderStateShard.TextureStateShard(locationIn, false, false)).setTexturingState(new RenderStateShard.OffsetTexturingStateShard(uIn, vIn)).setTransparencyState(new TransparencyStateShard("translucent_transparency", () -> {
+		RenderType.CompositeState renderTypeState = RenderType.CompositeState.builder().setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeEnergySwirlShader)).setTextureState(new RenderStateShard.TextureStateShard(locationIn, false, false)).setTexturingState(new RenderStateShard.OffsetTexturingStateShard(uIn, vIn)).setTransparencyState(new TransparencyStateShard("translucent_transparency", () -> {
 		      RenderSystem.enableBlend();
 		      RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 		   }, () -> {
@@ -67,4 +69,5 @@ public class LayerMagmaMonster extends RenderLayer<EntityMagmaMonster, ModelMagm
 		
 		return RenderType.create("lava_overlay", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true, renderTypeState);
 	}
+
 }

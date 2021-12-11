@@ -2,19 +2,13 @@ package magma_monsters;
 
 import java.nio.file.Path;
 
-import magma_monsters.client.render.RenderMagmaMonster;
-import magma_monsters.client.render.RenderMagmaMonsterGrunt;
 import magma_monsters.configs.Config;
-import magma_monsters.entities.EntityMagmaMonster;
-import magma_monsters.entities.EntityMagmaMonsterGrunt;
 import magma_monsters.network.QuenchMessage;
-import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -58,13 +52,8 @@ public class MagmaMonsters {
 		NETWORK_WRAPPER.registerMessage(0, QuenchMessage.class, QuenchMessage::encode, QuenchMessage::new, QuenchMessage.Handler::handle);
 	}
 
-    public static void entityAttributeCreationEvent(final EntityAttributeCreationEvent event) {
-    	event.put(ModEntities.MAGMA_MONSTER, EntityMagmaMonster.createAttributes().build());
-    	event.put(ModEntities.MAGMA_MONSTER_GRUNT, EntityMagmaMonsterGrunt.createAttributes().build());
-    }
-
 	private void doClientStuff(final FMLClientSetupEvent event) {
-		EntityRenderers.register(ModEntities.MAGMA_MONSTER, RenderMagmaMonster::new);
-		EntityRenderers.register(ModEntities.MAGMA_MONSTER_GRUNT, RenderMagmaMonsterGrunt::new);
+	//	EntityRenderers.register(ModEntities.MAGMA_MONSTER, RenderMagmaMonster::new);
+	//	EntityRenderers.register(ModEntities.MAGMA_MONSTER_GRUNT, RenderMagmaMonsterGrunt::new);
 	}
 }

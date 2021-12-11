@@ -128,15 +128,16 @@ public class ModelMagmaMonster<T extends EntityMagmaMonster> extends Hierarchica
 
 	@Override
 	 public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-		EntityMagmaMonster magma_monster = (EntityMagmaMonster) entity;
+	/*	EntityMagmaMonster magma_monster = (EntityMagmaMonster) entity;
 		float flap = (float) (Math.sin((magma_monster.tickCount) * 0.3F) * 0.8F);
 		root().getChild("headMain").yRot = (float) Math.sin((netHeadYaw / (180F / (float) Math.PI)) * 0.5F);
 		root().getChild("headMain").xRot = (float) (-0.5235987755982988F + Math.sin((headPitch / (180F / (float) Math.PI)) * 0.5F) + flap * 0.025F);
+		*/
 	}
 
 	@Override
 	public void prepareMobModel(T entity, float limbSwing, float limbSwingAngle, float partialRenderTicks) {
-		EntityMagmaMonster magma_monster = (EntityMagmaMonster) entity;
+	/*	EntityMagmaMonster magma_monster = (EntityMagmaMonster) entity;
 		float swing = (float) (Math.sin(limbSwing * 0.7F) * 1.2F * limbSwingAngle);
 		float flap = (float) (Math.sin((magma_monster.tickCount) * 0.3F) * 0.8F);
 
@@ -165,6 +166,7 @@ public class ModelMagmaMonster<T extends EntityMagmaMonster> extends Hierarchica
 		root().getChild("torsoBottom").xRot = 0.6981317007977318F - swing * 0.125F;
 		root().getChild("torsoBottom").zRot = 0 - swing * 0.125F;
 		root().getChild("jaw").xRot = 0.5235987755982988F + flap * 0.2F;
+		*/
 	}
 
 	@Override
