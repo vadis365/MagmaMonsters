@@ -65,7 +65,6 @@ public class EntityMagmaMonsterGrunt extends Monster{
 	public EntityMagmaMonsterGrunt(EntityType<? extends EntityMagmaMonsterGrunt> type, Level level) {
 		super(type, level);
 		setPathfindingMalus(BlockPathTypes.LAVA, 8.0F);
-		setPathfindingMalus(BlockPathTypes.DANGER_FIRE, 0.0F);
 		setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, 0.0F);
 		xpReward = 10;
 	}
@@ -121,13 +120,12 @@ public class EntityMagmaMonsterGrunt extends Monster{
 	}
 
 	public static AttributeSupplier.Builder createAttributes() {
-		return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, Config.MAGMA_MONSTER_GRUNT_HEALTH.get()) //health
-				.add(Attributes.FOLLOW_RANGE, 32D) //follow range
-				.add(Attributes.MOVEMENT_SPEED, 0.23000000417232513D) //move speed
+		return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, Config.MAGMA_MONSTER_GRUNT_HEALTH.get())
+				.add(Attributes.FOLLOW_RANGE, 32D)
+				.add(Attributes.MOVEMENT_SPEED, 0.25D)
 				.add(Attributes.ATTACK_DAMAGE, Config.MAGMA_MONSTER_GRUNT_ATTACK_DAMAGE.get()); //attack damage	
 	}
 
-	@SuppressWarnings("deprecation")
 	public static boolean canSpawnHere(EntityType<EntityMagmaMonsterGrunt> entity, LevelAccessor level, MobSpawnType spawn_reason, BlockPos pos, Random random) {
 		if(isDimBlacklisted(getDimensionRegName(((Level) level).dimension())))
 			return false;
@@ -328,7 +326,7 @@ public class EntityMagmaMonsterGrunt extends Monster{
 					attackTime = 20;
 					magma_monster.doHurtTarget(livingentity);
 				}
-				magma_monster.getMoveControl().setWantedPosition(livingentity.getX(), livingentity.getY(), livingentity.getZ(), 1.0D);
+				magma_monster.getMoveControl().setWantedPosition(livingentity.getX(), livingentity.getY(), livingentity.getZ(), 1.4D);
 			} else if (d0 < 256.0D) {
 				double d1 = livingentity.getX() - magma_monster.getX();
 				double d2 = livingentity.getBoundingBox().minY + (double) (livingentity.getBbHeight() / 2.0F) - (magma_monster.getY() + (double) (magma_monster.getBbHeight() / 2.0F));
@@ -353,7 +351,7 @@ public class EntityMagmaMonsterGrunt extends Monster{
 				}
 				magma_monster.getLookControl().setLookAt(livingentity, 10.0F, 10.0F);
 				magma_monster.getNavigation().isDone();
-				magma_monster.getMoveControl().setWantedPosition(livingentity.getX(), livingentity.getY(), livingentity.getZ(), 1.0D);
+				magma_monster.getMoveControl().setWantedPosition(livingentity.getX(), livingentity.getY(), livingentity.getZ(), 1.4D);
 			}
 			super.tick();
 		}

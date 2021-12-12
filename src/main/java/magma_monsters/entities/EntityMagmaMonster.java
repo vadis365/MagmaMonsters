@@ -66,7 +66,6 @@ public class EntityMagmaMonster extends Monster {
 		super(type, level);
 		setPathfindingMalus(BlockPathTypes.LAVA, 8.0F);
 		setPathfindingMalus(BlockPathTypes.DANGER_FIRE, 0.0F);
-		setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, 0.0F);
 		xpReward = 10;
 	}
 
@@ -121,13 +120,12 @@ public class EntityMagmaMonster extends Monster {
 	}
 
 	public static AttributeSupplier.Builder createAttributes() {
-		return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, Config.MAGMA_MONSTER_HEALTH.get()) //health
-				.add(Attributes.FOLLOW_RANGE, 32D) //follow range
-				.add(Attributes.MOVEMENT_SPEED, 0.23000000417232513D) //move speed
-				.add(Attributes.ATTACK_DAMAGE, Config.MAGMA_MONSTER_ATTACK_DAMAGE.get()); //attack damage	
+		return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, Config.MAGMA_MONSTER_HEALTH.get())
+				.add(Attributes.FOLLOW_RANGE, 32D)
+				.add(Attributes.MOVEMENT_SPEED, 0.25D)
+				.add(Attributes.ATTACK_DAMAGE, Config.MAGMA_MONSTER_ATTACK_DAMAGE.get());
 	}
 
-	@SuppressWarnings("deprecation")
 	public static boolean canSpawnHere(EntityType<EntityMagmaMonster> entity, LevelAccessor level, MobSpawnType spawn_reason, BlockPos pos, Random random) {
 		if(isDimBlacklisted(getDimensionRegName(((Level) level).dimension())))
 			return false;
@@ -281,7 +279,7 @@ public class EntityMagmaMonster extends Monster {
 
 	static class AttackGoal extends MeleeAttackGoal {
 		public AttackGoal(EntityMagmaMonster magma_monster) {
-			super(magma_monster, 1D, false);
+			super(magma_monster, 0.85D, false);
 		}
 
 		@Override
@@ -323,7 +321,7 @@ public class EntityMagmaMonster extends Monster {
 					magma_monster.doHurtTarget(livingentity);
 				}
 
-				magma_monster.getMoveControl().setWantedPosition(livingentity.getX(), livingentity.getY(), livingentity.getZ(), 1.0D);
+				magma_monster.getMoveControl().setWantedPosition(livingentity.getX(), livingentity.getY(), livingentity.getZ(), 1.2D);
 			} else if (d0 < 256.0D && magma_monster.getMolten()) {
 				double d1 = livingentity.getX() - magma_monster.getX();
 				double d2 = livingentity.getBoundingBox().minY + (double) (livingentity.getBbHeight() / 2.0F) - (magma_monster.getY() + (double) (magma_monster.getBbHeight() / 2.0F));
@@ -355,7 +353,7 @@ public class EntityMagmaMonster extends Monster {
 
 				magma_monster.getLookControl().setLookAt(livingentity, 10.0F, 10.0F);
 				magma_monster.getNavigation().isDone();
-				magma_monster.getMoveControl().setWantedPosition(livingentity.getX(), livingentity.getY(), livingentity.getZ(), 1.0D);
+				magma_monster.getMoveControl().setWantedPosition(livingentity.getX(), livingentity.getY(), livingentity.getZ(), 1.2D);
 			}
 
 			super.tick();
