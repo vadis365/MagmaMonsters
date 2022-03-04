@@ -123,7 +123,7 @@ public class EntityMagmaMonsterGrunt extends Monster{
 		return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, Config.MAGMA_MONSTER_GRUNT_HEALTH.get())
 				.add(Attributes.FOLLOW_RANGE, 32D)
 				.add(Attributes.MOVEMENT_SPEED, 0.25D)
-				.add(Attributes.ATTACK_DAMAGE, Config.MAGMA_MONSTER_GRUNT_ATTACK_DAMAGE.get()); //attack damage	
+				.add(Attributes.ATTACK_DAMAGE, Config.MAGMA_MONSTER_GRUNT_ATTACK_DAMAGE.get());
 	}
 
 	public static boolean canSpawnHere(EntityType<EntityMagmaMonsterGrunt> entity, LevelAccessor level, MobSpawnType spawn_reason, BlockPos pos, Random random) {
@@ -133,7 +133,7 @@ public class EntityMagmaMonsterGrunt extends Monster{
 		do {
 			blockPosMutable.move(Direction.UP);
 		} while (level.getFluidState(blockPosMutable).is(FluidTags.LAVA));
-		return level.getBlockState(blockPosMutable).isAir() && blockPosMutable.getY() <= Config.MAGMA_MONSTER_GRUNT_SPAWN_Y_HEIGHT.get();
+		return level.getBlockState(blockPosMutable).isAir() && blockPosMutable.getY() <= Config.MAGMA_MONSTER_GRUNT_SPAWN_MAX_Y_HEIGHT.get()&& blockPosMutable.getY() >= Config.MAGMA_MONSTER_GRUNT_SPAWN_MIN_Y_HEIGHT.get();
 	}
 
 	public static boolean isDimBlacklisted(String dimensionIn) {

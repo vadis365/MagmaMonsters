@@ -133,7 +133,7 @@ public class EntityMagmaMonster extends Monster {
 		do {
 			blockPosMutable.move(Direction.UP);
 		} while (level.getFluidState(blockPosMutable).is(FluidTags.LAVA));
-		return level.getBlockState(blockPosMutable).isAir() && blockPosMutable.getY() <= Config.MAGMA_MONSTER_SPAWN_Y_HEIGHT.get();
+		return level.getBlockState(blockPosMutable).isAir() && blockPosMutable.getY() <= Config.MAGMA_MONSTER_SPAWN_MAX_Y_HEIGHT.get()&& blockPosMutable.getY() >= Config.MAGMA_MONSTER_SPAWN_MIN_Y_HEIGHT.get();
 	}
 
 	public static boolean isDimBlacklisted(String dimensionIn) {
