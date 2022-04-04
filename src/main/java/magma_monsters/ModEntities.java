@@ -1,5 +1,4 @@
 package magma_monsters;
-
 import magma_monsters.entities.EntityMagmaMonster;
 import magma_monsters.entities.EntityMagmaMonsterGrunt;
 import net.minecraft.resources.ResourceLocation;
