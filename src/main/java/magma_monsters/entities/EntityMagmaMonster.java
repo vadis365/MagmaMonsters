@@ -20,6 +20,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -202,7 +203,7 @@ public class EntityMagmaMonster extends Monster {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public void lavaParticles(double x, double y, double z, Random rand) {
+	public void lavaParticles(double x, double y, double z, RandomSource random) {
 		ClientParticles.spawnCustomParticle("lava", x, y, z, 0F, 0F, 0F);
 	}
 
