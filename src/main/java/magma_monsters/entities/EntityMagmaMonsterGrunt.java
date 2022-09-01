@@ -13,6 +13,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -126,11 +127,19 @@ public class EntityMagmaMonsterGrunt extends Monster {
 	}
 
 	public static boolean canSpawnHere(EntityType<EntityMagmaMonsterGrunt> entity, LevelAccessor level, MobSpawnType spawn_reason, BlockPos pos, RandomSource random) {
+		if(getDimensionRegName(((Level) level).dimension()) == "the_nether" && !Config.MAGMA_MONSTER_GRUNT_HELL_SPAWN.get())
+			return false;
+		if(getDimensionRegName(((Level) level).dimension()) == "overworld" && !Config.MAGMA_MONSTER_GRUNT_OW_SPAWN.get())
+			return false;
 		BlockPos.MutableBlockPos blockPosMutable = pos.mutable();
 		do {
 			blockPosMutable.move(Direction.UP);
 		} while (level.getFluidState(blockPosMutable).is(FluidTags.LAVA));
 		return level.getBlockState(blockPosMutable).isAir() && blockPosMutable.getY() <= Config.MAGMA_MONSTER_GRUNT_SPAWN_MAX_Y_HEIGHT.get() && blockPosMutable.getY() >= Config.MAGMA_MONSTER_GRUNT_SPAWN_MIN_Y_HEIGHT.get();
+	}
+
+	public static String getDimensionRegName(ResourceKey<Level> reg) {
+		return reg.location().toString();
 	}
 
 	@Override
