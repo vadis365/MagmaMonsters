@@ -2,23 +2,17 @@ package magma_monsters;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
-@Mod.EventBusSubscriber(modid = Reference.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModSounds {
-	public static SoundEvent MAGMA_MONSTER_LIVING, MAGMA_MONSTER_HURT, MAGMA_MONSTER_DEATH;
+	private static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, Reference.MOD_ID);
+	public static final RegistryObject<SoundEvent> MAGMA_MONSTER_LIVING = getSounds().register("magma_monster_living", () -> new SoundEvent(new ResourceLocation(Reference.MOD_ID, "magma_monster_living")));
+	public static final RegistryObject<SoundEvent> MAGMA_MONSTER_HURT = getSounds().register("magma_monster_hurt", () -> new SoundEvent(new ResourceLocation(Reference.MOD_ID, "magma_monster_hurt")));
+	public static final RegistryObject<SoundEvent> MAGMA_MONSTER_DEATH = getSounds().register("magma_monster_death", () -> new SoundEvent(new ResourceLocation(Reference.MOD_ID, "magma_monster_death")));
 
-	public static void init() {
-		MAGMA_MONSTER_LIVING = new SoundEvent(new ResourceLocation("magma_monsters", "magma_monster_living")).setRegistryName("magma_monsters", "magma_monster_living");
-		MAGMA_MONSTER_HURT = new SoundEvent(new ResourceLocation("magma_monsters", "magma_monster_hurt")).setRegistryName("magma_monsters", "magma_monster_hurt");
-		MAGMA_MONSTER_DEATH = new SoundEvent(new ResourceLocation("magma_monsters", "magma_monster_death")).setRegistryName("magma_monsters", "magma_monster_death");
-	}
-
-	@SubscribeEvent
-	public static void registerSoundEvents(final RegistryEvent.Register<SoundEvent> event) {
-		init();
-		event.getRegistry().registerAll(MAGMA_MONSTER_LIVING, MAGMA_MONSTER_HURT, MAGMA_MONSTER_DEATH);
+	public static DeferredRegister<SoundEvent> getSounds() {
+		return SOUNDS;
 	}
 }

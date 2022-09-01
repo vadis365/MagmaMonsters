@@ -1,7 +1,6 @@
 package magma_monsters.entities;
 
 import java.util.EnumSet;
-import java.util.Random;
 
 import magma_monsters.MagmaMonsters;
 import magma_monsters.ModSounds;
@@ -14,7 +13,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -127,24 +125,12 @@ public class EntityMagmaMonster extends Monster {
 				.add(Attributes.ATTACK_DAMAGE, Config.MAGMA_MONSTER_ATTACK_DAMAGE.get());
 	}
 
-	public static boolean canSpawnHere(EntityType<EntityMagmaMonster> entity, LevelAccessor level, MobSpawnType spawn_reason, BlockPos pos, Random random) {
-		if(isDimBlacklisted(getDimensionRegName(((Level) level).dimension())))
-			return false;
+	public static boolean canSpawnHere(EntityType<EntityMagmaMonster> entity, LevelAccessor level, MobSpawnType spawn_reason, BlockPos pos, RandomSource random) {
 		BlockPos.MutableBlockPos blockPosMutable = pos.mutable();
 		do {
 			blockPosMutable.move(Direction.UP);
 		} while (level.getFluidState(blockPosMutable).is(FluidTags.LAVA));
-		return level.getBlockState(blockPosMutable).isAir() && blockPosMutable.getY() <= Config.MAGMA_MONSTER_SPAWN_MAX_Y_HEIGHT.get()&& blockPosMutable.getY() >= Config.MAGMA_MONSTER_SPAWN_MIN_Y_HEIGHT.get();
-	}
-
-	public static boolean isDimBlacklisted(String dimensionIn) {
-		if(Config.MAGMA_MONSTER_BLACKLISTED_DIMS.get().contains(dimensionIn))
-			return true;
-		return false;
-	}
-
-	public static String getDimensionRegName(ResourceKey<Level> reg) {
-		return reg.location().toString();
+		return level.getBlockState(blockPosMutable).isAir() && blockPosMutable.getY() <= Config.MAGMA_MONSTER_SPAWN_MAX_Y_HEIGHT.get() && blockPosMutable.getY() >= Config.MAGMA_MONSTER_SPAWN_MIN_Y_HEIGHT.get();
 	}
 
 	@Override
@@ -163,17 +149,17 @@ public class EntityMagmaMonster extends Monster {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return ModSounds.MAGMA_MONSTER_LIVING;
+		return ModSounds.MAGMA_MONSTER_LIVING.get();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource source) {
-		return ModSounds.MAGMA_MONSTER_HURT;
+		return ModSounds.MAGMA_MONSTER_HURT.get();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return ModSounds.MAGMA_MONSTER_DEATH;
+		return ModSounds.MAGMA_MONSTER_DEATH.get();
 	}
 
 	@SuppressWarnings("deprecation")

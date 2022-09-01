@@ -24,7 +24,7 @@ public class ModRendering {
 
     @SubscribeEvent
     public static void registerEntityRender(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(ModEntities.MAGMA_MONSTER, RenderMagmaMonster::new);
-        event.registerEntityRenderer(ModEntities.MAGMA_MONSTER_GRUNT, RenderMagmaMonsterGrunt::new);
+        event.registerEntityRenderer(ModEntities.MAGMA_MONSTER.get(), RenderMagmaMonster::new);
+        event.registerEntityRenderer(ModEntities.MAGMA_MONSTER_GRUNT.get(), RenderMagmaMonsterGrunt::new);
     }
 }

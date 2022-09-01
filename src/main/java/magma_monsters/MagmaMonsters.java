@@ -39,6 +39,10 @@ public class MagmaMonsters {
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
 		Path path = FMLPaths.CONFIGDIR.get().resolve("magma_monsters-common.toml");
 		Config.loadConfig(Config.COMMON_CONFIG, path);
+		
+		ModEntities.getEntityTypes().register(FMLJavaModLoadingContext.get().getModEventBus());
+		ModEntities.getItems().register(FMLJavaModLoadingContext.get().getModEventBus());
+		ModSounds.getSounds().register(FMLJavaModLoadingContext.get().getModEventBus());
 	}
 
 	public static CreativeModeTab TAB = new CreativeModeTab(Reference.MOD_ID) {
@@ -49,7 +53,6 @@ public class MagmaMonsters {
 	};
 
 	private void setup(final FMLCommonSetupEvent event) {
-		MinecraftForge.EVENT_BUS.register(new ModSpawns());
 		NETWORK_WRAPPER.registerMessage(0, QuenchMessage.class, QuenchMessage::encode, QuenchMessage::new, QuenchMessage.Handler::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 	}
 
