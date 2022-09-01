@@ -64,7 +64,7 @@ public class EntityMagmaMonster extends Monster {
 
 	public EntityMagmaMonster(EntityType<? extends EntityMagmaMonster> type, Level level) {
 		super(type, level);
-		setPathfindingMalus(BlockPathTypes.LAVA, 8.0F);
+		setPathfindingMalus(BlockPathTypes.LAVA, 0.0F);
 		setPathfindingMalus(BlockPathTypes.DANGER_FIRE, 0.0F);
 		xpReward = 10;
 	}
