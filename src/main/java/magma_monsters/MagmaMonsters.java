@@ -6,9 +6,6 @@ import java.util.Optional;
 import magma_monsters.configs.Config;
 import magma_monsters.network.QuenchMessage;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -39,18 +36,11 @@ public class MagmaMonsters {
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
 		Path path = FMLPaths.CONFIGDIR.get().resolve("magma_monsters-common.toml");
 		Config.loadConfig(Config.COMMON_CONFIG, path);
-		
+
 		ModEntities.getEntityTypes().register(FMLJavaModLoadingContext.get().getModEventBus());
 		ModEntities.getItems().register(FMLJavaModLoadingContext.get().getModEventBus());
 		ModSounds.getSounds().register(FMLJavaModLoadingContext.get().getModEventBus());
 	}
-
-	public static CreativeModeTab TAB = new CreativeModeTab(Reference.MOD_ID) {
-		@Override
-		public ItemStack makeIcon() {
-			return new ItemStack (Items.MAGMA_CREAM);
-		}
-	};
 
 	private void setup(final FMLCommonSetupEvent event) {
 		NETWORK_WRAPPER.registerMessage(0, QuenchMessage.class, QuenchMessage::encode, QuenchMessage::new, QuenchMessage.Handler::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));

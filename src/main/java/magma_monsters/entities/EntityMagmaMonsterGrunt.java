@@ -21,7 +21,6 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -50,7 +49,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -187,13 +185,14 @@ public class EntityMagmaMonsterGrunt extends Monster {
 				spawnAtLocation(new ItemStack(Item.byBlock(Blocks.COBBLESTONE)), 0F);
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	public void tick() {
 		super.tick();
-		if (level.isClientSide && level.getGameTime() % 40 == 0 && getMolten())
+		if (level().isClientSide && level().getGameTime() % 40 == 0 && getMolten())
 			lavaParticles(getX(), getY() + 0.75D, getZ(), random);
 
-		if (!level.isClientSide) {
+		if (!level().isClientSide) {
 			if (getMolten() && getMoltenTimer() < 50)
 				setMoltenTimer(getMoltenTimer() + 1);
 
@@ -208,23 +207,23 @@ public class EntityMagmaMonsterGrunt extends Monster {
 	}
 
 	public void changeParticles(Entity entity, float x, float y, float z, byte type) {
-		MagmaMonsters.NETWORK_WRAPPER.send(PacketDistributor.NEAR.with(()-> new TargetPoint(x, y, z, 16, entity.level.dimension())), new QuenchMessage(x, y, z, type));
+		MagmaMonsters.NETWORK_WRAPPER.send(PacketDistributor.NEAR.with(()-> new TargetPoint(x, y, z, 16, entity.level().dimension())), new QuenchMessage(x, y, z, type));
 	}
 
 	@Override
 	  public void aiStep() {
 		super.aiStep();
-		if (!level.isClientSide) {
+		if (!level().isClientSide) {
 
 			if (isInWaterOrRain() && !isInLava() && getMolten()) {
-		        level.playSound(null, getX(), getY(), getZ(), SoundEvents.LAVA_EXTINGUISH, SoundSource.HOSTILE, 1F, 2.6F + (level.random.nextFloat() - level.random.nextFloat()) * 0.8F);
+		        level().playSound(null, getX(), getY(), getZ(), SoundEvents.LAVA_EXTINGUISH, SoundSource.HOSTILE, 1F, 2.6F + (level().random.nextFloat() - level().random.nextFloat()) * 0.8F);
 		        changeParticles(this, (float)getX(), (float)getY() + 0.9F, (float)getZ(), (byte) 0);
 				setMolten(false);
 				getAttribute(Attributes.ARMOR).setBaseValue(10D);
 			}
 
 			if (isInLava() && !getMolten()) {
-		        level.playSound(null, getX(), getY(), getZ(), SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 1F, 0.6F + (level.random.nextFloat() - level.random.nextFloat()) * 0.8F);
+		        level().playSound(null, getX(), getY(), getZ(), SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 1F, 0.6F + (level().random.nextFloat() - level().random.nextFloat()) * 0.8F);
 		        changeParticles(this, (float)getX(), (float)getY() + 0.9F, (float)getZ(), (byte) 1);
 				setMolten(true);
 				getAttribute(Attributes.ARMOR).setBaseValue(0D);
@@ -239,9 +238,9 @@ public class EntityMagmaMonsterGrunt extends Monster {
 					j = Mth.floor(getY());
 					k = Mth.floor(getZ() + (double) ((float) (l / 2 % 2 * 2 - 1) * 0.25F));
 					BlockPos blockpos = new BlockPos(i, j, k);
-					BlockState blockstate = BaseFireBlock.getState(level, blockpos);
-					if (level.getBlockState(blockpos).getMaterial() == Material.AIR && BaseFireBlock.canBePlacedAt(level, blockpos, Direction.DOWN))
-						level.setBlock(blockpos, blockstate, 11);
+					BlockState blockstate = BaseFireBlock.getState(level(), blockpos);
+					if (level().getBlockState(blockpos).isAir() && BaseFireBlock.canBePlacedAt(level(), blockpos, Direction.DOWN))
+						level().setBlock(blockpos, blockstate, 11);
 				}
 			}
 		}
@@ -251,7 +250,7 @@ public class EntityMagmaMonsterGrunt extends Monster {
 	public boolean doHurtTarget(Entity entity) {
 		if (hasLineOfSight(entity)) {
 			int modifier =  !getMolten() ? 2 : 1;
-			boolean hasHitTarget = entity.hurt(DamageSource.mobAttack(this), (float) ((int) this.getAttribute(Attributes.ATTACK_DAMAGE).getBaseValue() * modifier));
+			boolean hasHitTarget = entity.hurt(this.damageSources().mobAttack(this), (float) ((int) this.getAttribute(Attributes.ATTACK_DAMAGE).getBaseValue() * modifier));
 			if (hasHitTarget) {
 				if (entity instanceof LivingEntity && !getMolten()) {
 					int duration = Config.MAGMA_MONSTER_GRUNT_SLOWNESS_EFFECT_DURATION.get();
@@ -266,8 +265,8 @@ public class EntityMagmaMonsterGrunt extends Monster {
 
 	@Override
 	public boolean hurt(DamageSource source, float damage) {
-		if (source instanceof IndirectEntityDamageSource && !getMolten()) {
-			level.playSound((Player) null, getX(), getY(), getZ(), SoundEvents.STONE_BUTTON_CLICK_OFF, SoundSource.HOSTILE, 2.5F, 3F);
+		if (source.isIndirect() && !getMolten()) {
+			level().playSound((Player) null, getX(), getY(), getZ(), SoundEvents.STONE_BUTTON_CLICK_OFF, SoundSource.HOSTILE, 2.5F, 3F);
 			return false;
 		}
 		return super.hurt(source, damage);
@@ -339,10 +338,10 @@ public class EntityMagmaMonsterGrunt extends Monster {
 					}
 					if (attackStep == 1) {
 						double f = Math.sqrt(Math.sqrt(d0)) * 0.5D;
-						magma_monster.level.levelEvent((Player) null, 1018, magma_monster.blockPosition(), 0);
-						SmallFireball smallfireballentity = new SmallFireball(magma_monster.level, magma_monster, d1 + magma_monster.getRandom().nextGaussian() * (double) f, d2, d3 + magma_monster.getRandom().nextGaussian() * (double) f);
+						magma_monster.level().levelEvent((Player) null, 1018, magma_monster.blockPosition(), 0);
+						SmallFireball smallfireballentity = new SmallFireball(magma_monster.level(), magma_monster, d1 + magma_monster.getRandom().nextGaussian() * (double) f, d2, d3 + magma_monster.getRandom().nextGaussian() * (double) f);
 						smallfireballentity.setPos(smallfireballentity.getX(), magma_monster.getY() + (double) (magma_monster.getBbHeight() / 2.0F) + 0.5D, smallfireballentity.getZ());
-						magma_monster.level.addFreshEntity(smallfireballentity);
+						magma_monster.level().addFreshEntity(smallfireballentity);
 					}
 				}
 				magma_monster.getLookControl().setLookAt(livingentity, 10.0F, 10.0F);
