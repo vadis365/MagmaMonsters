@@ -39,6 +39,7 @@ public class MagmaMonsters {
 
 		ModEntities.getEntityTypes().register(FMLJavaModLoadingContext.get().getModEventBus());
 		ModEntities.getItems().register(FMLJavaModLoadingContext.get().getModEventBus());
+		ModEntities.getTab().register(FMLJavaModLoadingContext.get().getModEventBus());
 		ModSounds.getSounds().register(FMLJavaModLoadingContext.get().getModEventBus());
 	}
 
