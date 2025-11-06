@@ -1,52 +1,38 @@
 package magma_monsters;
 
 import java.nio.file.Path;
-import java.util.Optional;
+import java.util.Locale;
 
 import magma_monsters.configs.Config;
-import magma_monsters.network.QuenchMessage;
+import magma_monsters.network.MagmaMonstersNetwork;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.fml.loading.FMLPaths;
 
 @Mod(Reference.MOD_ID)
 public class MagmaMonsters {
-	private static final String PROTOCOL_VERSION = "1";
-	public static final SimpleChannel NETWORK_WRAPPER = NetworkRegistry.newSimpleChannel(new ResourceLocation(Reference.MOD_ID, "magma_net"),
-		    () -> PROTOCOL_VERSION,
-		    PROTOCOL_VERSION::equals,
-		    PROTOCOL_VERSION::equals
-		);
 
-	public MagmaMonsters () {
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
-		MinecraftForge.EVENT_BUS.register(this);
+	public MagmaMonsters (IEventBus modBus) {
+		ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.SERVER, Config.SERVER);
+		Path path = FMLPaths.CONFIGDIR.get().resolve("magma_monsters-server.toml");
+		Config.loadConfig(Config.SERVER, path);
 
-		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_CONFIG); // no idea atm
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
-		Path path = FMLPaths.CONFIGDIR.get().resolve("magma_monsters-common.toml");
-		Config.loadConfig(Config.COMMON_CONFIG, path);
-
-		ModEntities.getEntityTypes().register(FMLJavaModLoadingContext.get().getModEventBus());
-		ModEntities.getItems().register(FMLJavaModLoadingContext.get().getModEventBus());
-		ModEntities.getTab().register(FMLJavaModLoadingContext.get().getModEventBus());
-		ModSounds.getSounds().register(FMLJavaModLoadingContext.get().getModEventBus());
+		ModEntities.getEntityTypes().register(modBus);
+		ModEntities.getItems().register(modBus);
+		ModEntities.getTab().register(modBus);
+		ModSounds.getSounds().register(modBus);
+		modBus.addListener(MagmaMonstersNetwork::register);
+		if (FMLEnvironment.dist.isClient()) {
+			modBus.addListener(ModRendering::registerEntityLayers);
+			modBus.addListener(ModRendering::registerEntityRender);
+		}
 	}
-
-	private void setup(final FMLCommonSetupEvent event) {
-		NETWORK_WRAPPER.registerMessage(0, QuenchMessage.class, QuenchMessage::encode, QuenchMessage::new, QuenchMessage.Handler::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-	}
-
-	private void doClientStuff(final FMLClientSetupEvent event) {
+	
+	public static ResourceLocation prefix(String name) {
+		return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, name.toLowerCase(Locale.ROOT));
 	}
 }

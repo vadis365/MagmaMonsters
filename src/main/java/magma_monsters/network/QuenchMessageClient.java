@@ -1,24 +1,29 @@
 package magma_monsters.network;
 
-import java.util.function.Supplier;
+import io.netty.buffer.ByteBuf;
+import magma_monsters.MagmaMonsters;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-import magma_monsters.particles.ClientParticles;
-import net.minecraft.util.Mth;
-import net.minecraftforge.network.NetworkEvent;
+public record QuenchMessageClient (float posX, float posY, float posZ, byte effect) implements CustomPacketPayload {
+	
+	public static final CustomPacketPayload.Type<QuenchMessageClient> TYPE = new CustomPacketPayload.Type<>(MagmaMonsters.prefix("disruptor_particle"));
 
-public class QuenchMessageClient {
-
-	@SuppressWarnings("static-access")
-	public static void handlePacket(QuenchMessage pkt, Supplier<NetworkEvent.Context> ctx) {
-				ctx.get().enqueueWork(() -> {
-					for (int a = 0; a < 360; a += 10) {
-						double ang = a * Math.PI / 180D;
-						if (pkt.type == 0)
-							ClientParticles.spawnCustomParticle("smoke", pkt.posX + -Mth.sin((float) ang) * 0.125F, pkt.posY, pkt.posZ + Mth.cos((float) ang) * 0.125F, -Mth.sin((float) ang) * 0.1, 0.05D, Mth.cos((float) ang) * 0.1);
-						if (pkt.type == 1)
-							ClientParticles.spawnCustomParticle("flame", pkt.posX + -Mth.sin((float) ang) * 0.125F, pkt.posY, pkt.posZ + Mth.cos((float) ang) * 0.125F, -Mth.sin((float) ang) * 0.1, 0.05D, Mth.cos((float) ang) * 0.1);
-					}
-				});
-			ctx.get().setPacketHandled(true);
-		}
+    public static final StreamCodec<ByteBuf, QuenchMessageClient> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.FLOAT,
+            QuenchMessageClient::posX,
+            ByteBufCodecs.FLOAT,
+            QuenchMessageClient::posY,
+            ByteBufCodecs.FLOAT,
+            QuenchMessageClient::posZ,
+            ByteBufCodecs.BYTE,
+            QuenchMessageClient::effect,
+            QuenchMessageClient::new
+        );
+        
+        @Override
+        public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
 }

@@ -12,8 +12,8 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class ModelMagmaMonsterGrunt<T extends EntityMagmaMonsterGrunt> extends HierarchicalModel<T> {
@@ -165,8 +165,8 @@ public class ModelMagmaMonsterGrunt<T extends EntityMagmaMonsterGrunt> extends H
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
-      root().render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+	public void renderToBuffer(PoseStack stack, VertexConsumer consumer, int light, int overlay, int colour) {
+		root().render(stack, consumer, light, overlay, colour);
 	}
 
 	@Override

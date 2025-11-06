@@ -1,12 +1,15 @@
 package magma_monsters.network;
 
-import java.util.function.Supplier;
-
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class QuenchMessage {
-
+	
+	public static void handle(final QuenchMessageClient pkt, final IPayloadContext context) {
+		context.enqueueWork(() -> {
+			QuenchMessageClientParticles.handlePacket(pkt.posX(), pkt.posY(), pkt.posZ(), pkt.effect());
+		});
+	}
+/*
 	public static float posX;
 	public static float posY;
 	public static float posZ;
@@ -40,4 +43,5 @@ public class QuenchMessage {
 			ctx.get().setPacketHandled(true);
 		}
 	}
+	*/
 }

@@ -1,0 +1,25 @@
+[06Nov2025 17:26:21.570] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeclientuserdev, --version, 21.1.121, --assetIndex, 17, --assetsDir, C:\\Users\\Dave\\.gradle\\caches\\neoformruntime\\assets, --gameDir, ., --fml.neoForgeVersion, 21.1.121, --fml.fmlVersion, 4.0.37, --fml.mcVersion, 1.21.1, --fml.neoFormVersion, 20240808.144430, --width, 1280, --height, 720]
+[06Nov2025 17:26:21.579] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: JVM identified as Eclipse Adoptium OpenJDK 64-Bit Server VM 21.0.4+7-LTS
+[06Nov2025 17:26:21.586] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 11.0.4+main.d2e20e43 starting: java version 21.0.4 by Eclipse Adoptium; OS Windows 7 arch amd64 version 6.1
+[06Nov2025 17:26:22.050] [main/INFO] [net.neoforged.fml.loading.ImmediateWindowHandler/]: Loading ImmediateWindowProvider fmlearlywindow
+[06Nov2025 17:26:22.511] [main/INFO] [EARLYDISPLAY/]: Trying GL version 4.6
+[06Nov2025 17:26:23.332] [main/INFO] [EARLYDISPLAY/]: Trying GL version 4.5
+[06Nov2025 17:26:23.341] [main/INFO] [EARLYDISPLAY/]: Trying GL version 4.4
+[06Nov2025 17:26:23.350] [main/INFO] [EARLYDISPLAY/]: Trying GL version 4.3
+[06Nov2025 17:26:23.357] [main/INFO] [EARLYDISPLAY/]: Trying GL version 4.2
+[06Nov2025 17:26:23.365] [main/INFO] [EARLYDISPLAY/]: Trying GL version 4.1
+[06Nov2025 17:26:23.373] [main/INFO] [EARLYDISPLAY/]: Trying GL version 4.0
+[06Nov2025 17:26:23.381] [main/INFO] [EARLYDISPLAY/]: Trying GL version 3.3
+[06Nov2025 17:26:23.496] [main/INFO] [EARLYDISPLAY/]: Requested GL version 3.3 got version 3.3
+[06Nov2025 17:26:23.940] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=union:/C:/Users/Dave/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.15.2+mixin.0.8.7/2af2f021d8e02a0220dc27a7a72b4666d66d44ca/sponge-mixin-0.15.2+mixin.0.8.7.jar%23131!/ Service=ModLauncher Env=CLIENT
+[06Nov2025 17:26:24.868] [pool-2-thread-1/INFO] [EARLYDISPLAY/]: GL info: GeForce 8500 GT/PCIe/SSE2 GL version 3.3.0, NVIDIA Corporation
+[06Nov2025 17:26:25.289] [main/INFO] [net.neoforged.fml.loading.moddiscovery.locators.JarInJarDependencyLocator/]: Found 2 dependencies adding them to mods collection
+[06Nov2025 17:26:25.295] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/]: 
+     Mod List:
+		Name Version (Mod Id)
+
+		Magma Monsters 2.0.0 (magma_monsters)
+		Minecraft 1.21.1 (minecraft)
+		NeoForge 21.1.121 (neoforge)
+[06Nov2025 17:26:28.469] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeclientuserdev' with arguments [--version, 21.1.121, --gameDir, ., --assetsDir, C:\Users\Dave\.gradle\caches\neoformruntime\assets, --assetIndex, 17, --width, 1280, --height, 720]
+[06Nov2025 17:26:39.351] [Datafixer Bootstrap/INFO] [com.mojang.datafixers.DataFixerBuilder/]: 229 Datafixer optimizations took 2300 milliseconds

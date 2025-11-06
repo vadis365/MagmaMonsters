@@ -2,10 +2,9 @@ package magma_monsters.entities;
 
 import java.util.EnumSet;
 
-import magma_monsters.MagmaMonsters;
 import magma_monsters.ModSounds;
 import magma_monsters.configs.Config;
-import magma_monsters.network.QuenchMessage;
+import magma_monsters.network.QuenchMessageClient;
 import magma_monsters.particles.ClientParticles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,6 +13,8 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -40,20 +41,16 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.SmallFireball;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseFireBlock;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.PacketDistributor.TargetPoint;
+import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class EntityMagmaMonster extends Monster {
 	private static final EntityDataAccessor<Boolean> IS_MOLTEN = SynchedEntityData.defineId(EntityMagmaMonster.class, EntityDataSerializers.BOOLEAN);
@@ -62,16 +59,16 @@ public class EntityMagmaMonster extends Monster {
 
 	public EntityMagmaMonster(EntityType<? extends EntityMagmaMonster> type, Level level) {
 		super(type, level);
-		setPathfindingMalus(BlockPathTypes.LAVA, 0.0F);
-		setPathfindingMalus(BlockPathTypes.DANGER_FIRE, 0.0F);
+		setPathfindingMalus(PathType.LAVA, 0.0F);
+		setPathfindingMalus(PathType.DANGER_FIRE, 0.0F);
 		xpReward = 10;
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		entityData.define(IS_MOLTEN, true);
-		entityData.define(MOLTEN_TIMER, 50);
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(IS_MOLTEN, true);
+		builder.define(MOLTEN_TIMER, 50);
 	}
 
 	public void setMolten(boolean molten) {
@@ -79,7 +76,7 @@ public class EntityMagmaMonster extends Monster {
 	}
 
 	public boolean getMolten() {
-		return entityData.get(IS_MOLTEN).booleanValue();
+		return entityData.get(IS_MOLTEN);
 	}
 
 	public void setMoltenTimer(int moltenTimer) {
@@ -168,7 +165,7 @@ public class EntityMagmaMonster extends Monster {
 	protected SoundEvent getDeathSound() {
 		return ModSounds.MAGMA_MONSTER_DEATH.get();
 	}
-
+/*
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHitIn) {
@@ -179,14 +176,14 @@ public class EntityMagmaMonster extends Monster {
 			else
 				spawnAtLocation(new ItemStack(Item.byBlock(Blocks.OBSIDIAN)), 0F);
 	}
-
+*/
 	@Override
 	public void tick() {
 		super.tick();
-		if (level().isClientSide && level().getGameTime() % 40 == 0 && getMolten())
+		if (level().isClientSide() && level().getGameTime() % 40 == 0 && getMolten())
 			lavaParticles(getX(), getY() + 1.3D, getZ(), random);
 
-		if (!level().isClientSide) {
+		if (!level().isClientSide()) {
 			if (getMolten() && getMoltenTimer() < 50)
 				setMoltenTimer(getMoltenTimer() + 1);
 
@@ -200,24 +197,24 @@ public class EntityMagmaMonster extends Monster {
 		ClientParticles.spawnCustomParticle("lava", x, y, z, 0F, 0F, 0F);
 	}
 
-	public void changeParticles(Entity entity, float x, float y, float z, byte type) {
-		MagmaMonsters.NETWORK_WRAPPER.send(PacketDistributor.NEAR.with(()-> new TargetPoint(x, y, z, 16, entity.level().dimension())), new QuenchMessage(x, y, z, type));
+	public void changeParticles(Level level, Entity entity, float x, float y, float z, byte type) {
+		PacketDistributor.sendToPlayersNear((ServerLevel)level, (ServerPlayer)null, (double)x, (double)y, (double)z, (double)16, new QuenchMessageClient(x, y, z, type));
 	}
 
 	@Override
 	  public void aiStep() {
 		super.aiStep();
-		if (!level().isClientSide) {
+		if (!level().isClientSide()) {
 			if (isInWaterOrRain() && !isInLava() && getMolten()) {
-		        level().playSound(null, getX(), getY(), getZ(), SoundEvents.LAVA_EXTINGUISH, SoundSource.HOSTILE, 1F, 2.6F + (level().random.nextFloat() - level().random.nextFloat()) * 0.8F);
-		        changeParticles(this, (float)getX(), (float)getY() + 0.9F, (float)getZ(), (byte) 0);
+		        level().playSound(null, getX(), getY(), getZ(), SoundEvents.LAVA_EXTINGUISH, SoundSource.HOSTILE, 1F, 2.6F + (level().getRandom().nextFloat() - level().getRandom().nextFloat()) * 0.8F);
+		        changeParticles(level(), this, (float)getX(), (float)getY() + 0.9F, (float)getZ(), (byte) 0);
 				setMolten(false);
 				getAttribute(Attributes.ARMOR).setBaseValue(10D);
 			}
 
 			if (isInLava() && !getMolten()) {
-		        level().playSound(null, getX(), getY(), getZ(), SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 1F, 0.6F + (level().random.nextFloat() - level().random.nextFloat()) * 0.8F);
-		        changeParticles(this, (float)getX(), (float)getY() + 0.9F, (float)getZ(), (byte) 1);
+		        level().playSound(null, getX(), getY(), getZ(), SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 1F, 0.6F + (level().getRandom().nextFloat() - level().getRandom().nextFloat()) * 0.8F);
+		        changeParticles(level(), this, (float)getX(), (float)getY() + 0.9F, (float)getZ(), (byte) 1);
 				setMolten(true);
 				getAttribute(Attributes.ARMOR).setBaseValue(0D);
 			}
@@ -258,7 +255,7 @@ public class EntityMagmaMonster extends Monster {
 
 	@Override
 	public boolean hurt(DamageSource source, float damage) {
-		if (source.isIndirect() && !getMolten()) {
+		if (!source.isDirect() && !getMolten()) {
 			level().playSound((Player) null, getX(), getY(), getZ(), SoundEvents.STONE_BUTTON_CLICK_OFF, SoundSource.HOSTILE, 2.5F, 3F);
 			return false;
 		}
@@ -276,10 +273,10 @@ public class EntityMagmaMonster extends Monster {
 			super(magma_monster, 0.85D, false);
 		}
 
-		@Override
-		protected double getAttackReachSqr(LivingEntity attackTarget) {
-			return (double) (4.0F + attackTarget.getBbWidth());
-		}
+	//	@Override
+	//	protected double getAttackReachSqr(LivingEntity attackTarget) {
+	//		return (double) (4.0F + attackTarget.getBbWidth());
+	//	}
 	}
 
 	static class AIFireballAttack extends Goal {
@@ -338,7 +335,8 @@ public class EntityMagmaMonster extends Monster {
 						magma_monster.level().levelEvent((Player) null, 1018, magma_monster.blockPosition(), 0);
 
 						for (int i = 0; i < 1; ++i) {
-							SmallFireball smallfireballentity = new SmallFireball(magma_monster.level(), magma_monster, d1 + magma_monster.getRandom().nextGaussian() * (double) f, d2, d3 + magma_monster.getRandom().nextGaussian() * (double) f);
+							Vec3 vec3 = new Vec3(d1 + magma_monster.getRandom().nextGaussian() * (double) f, d2, d3 + magma_monster.getRandom().nextGaussian() * (double) f);
+							SmallFireball smallfireballentity = new SmallFireball(magma_monster.level(), magma_monster, vec3.normalize());
 							smallfireballentity.setPos(smallfireballentity.getX(), magma_monster.getY() + (double) (magma_monster.getBbHeight() / 2.0F) + 0.5D, smallfireballentity.getZ());
 							magma_monster.level().addFreshEntity(smallfireballentity);
 						}

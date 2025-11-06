@@ -1,55 +1,50 @@
 package magma_monsters;
+import java.util.function.Supplier;
+
 import magma_monsters.entities.EntityMagmaMonster;
 import magma_monsters.entities.EntityMagmaMonsterGrunt;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraftforge.common.ForgeSpawnEggItem;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.common.DeferredSpawnEggItem;
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
+import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
-@Mod.EventBusSubscriber(modid = Reference.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModEntities {
-	private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Reference.MOD_ID);
-	private static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, Reference.MOD_ID);
+	private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Reference.MOD_ID);
+	private static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, Reference.MOD_ID);
 	private static final DeferredRegister<CreativeModeTab> TAB = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Reference.MOD_ID);
 
-	public static final RegistryObject<EntityType<EntityMagmaMonster>> MAGMA_MONSTER = getEntityTypes().register("magma_monster", () -> EntityType.Builder.of(EntityMagmaMonster::new, MobCategory.MONSTER).fireImmune().sized(0.90F, 1.75F).build(getEntityResource("magma_monster").toString()));
-	public static final RegistryObject<EntityType<EntityMagmaMonsterGrunt>> MAGMA_MONSTER_GRUNT = getEntityTypes().register("magma_monster_grunt", () -> EntityType.Builder.of(EntityMagmaMonsterGrunt::new, MobCategory.MONSTER).fireImmune().sized(0.5F, 0.9F).build(getEntityResource("magma_monster_grunt").toString()));
-	public static final RegistryObject<Item> MAGMA_MONSTER_SPAWN_EGG = getItems().register("magma_monster_spawn_egg",  () -> new ForgeSpawnEggItem(()-> MAGMA_MONSTER.get(), 0xFF0000, 0x06B900, new Item.Properties()));
-	public static final RegistryObject<Item> MAGMA_MONSTER_GRUNT_SPAWN_EGG = getItems().register("magma_monster_grunt_spawn_egg",  () -> new ForgeSpawnEggItem(()-> MAGMA_MONSTER_GRUNT.get(), 0xFF0000, 0x06B900, new Item.Properties()));
-	public static final RegistryObject<CreativeModeTab> MAGMA_MONSTER_TAB = TAB.register(Reference.MOD_ID, () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.magma_monsters")).icon(Items.FIRE_CHARGE::getDefaultInstance).displayItems((params, output) -> {
+	public static final Supplier<EntityType<EntityMagmaMonster>> MAGMA_MONSTER = getEntityTypes().register("magma_monster", () -> EntityType.Builder.of(EntityMagmaMonster::new, MobCategory.MONSTER).fireImmune().sized(0.90F, 1.75F).build(prefix("magma_monster")));
+	public static final Supplier<EntityType<EntityMagmaMonsterGrunt>> MAGMA_MONSTER_GRUNT = getEntityTypes().register("magma_monster_grunt", () -> EntityType.Builder.of(EntityMagmaMonsterGrunt::new, MobCategory.MONSTER).fireImmune().sized(0.5F, 0.9F).build(prefix("magma_monster_grunt")));
+	public static final Supplier<Item> MAGMA_MONSTER_SPAWN_EGG = getItems().register("magma_monster_spawn_egg",  () -> new DeferredSpawnEggItem(()-> MAGMA_MONSTER.get(), 0xFF0000, 0x06B900, new Item.Properties()));
+	public static final Supplier<Item> MAGMA_MONSTER_GRUNT_SPAWN_EGG = getItems().register("magma_monster_grunt_spawn_egg",  () -> new DeferredSpawnEggItem(()-> MAGMA_MONSTER_GRUNT.get(), 0xFF0000, 0x06B900, new Item.Properties()));
+	public static final Supplier<CreativeModeTab> MAGMA_MONSTER_TAB = TAB.register(Reference.MOD_ID, () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.magma_monsters")).icon(Items.FIRE_CHARGE::getDefaultInstance).displayItems((params, output) -> {
 				output.accept(MAGMA_MONSTER_SPAWN_EGG.get());
 				output.accept(MAGMA_MONSTER_GRUNT_SPAWN_EGG.get());
 			})
 			.build());
 
-	@SuppressWarnings("deprecation")
-	public static void init() {
-		SpawnPlacements.register(MAGMA_MONSTER.get(), SpawnPlacements.Type.IN_LAVA, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EntityMagmaMonster::canSpawnHere);
-		SpawnPlacements.register(MAGMA_MONSTER_GRUNT.get(), SpawnPlacements.Type.IN_LAVA, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EntityMagmaMonsterGrunt::canSpawnHere);
+	public static void registerSpawnPlacements(RegisterSpawnPlacementsEvent event) {
+		event.register(MAGMA_MONSTER.get(), SpawnPlacementTypes.IN_LAVA, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EntityMagmaMonster::canSpawnHere, null);
+		event.register(MAGMA_MONSTER_GRUNT.get(), SpawnPlacementTypes.IN_LAVA, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EntityMagmaMonsterGrunt::canSpawnHere, null);
 	}
 
-	@SubscribeEvent
-    public static void entityAttributeCreationEvent(final EntityAttributeCreationEvent event) {
-		init();
+	public static void initializeAttributes(EntityAttributeCreationEvent event) {
     	event.put(ModEntities.MAGMA_MONSTER.get(), EntityMagmaMonster.createAttributes().build());
     	event.put(ModEntities.MAGMA_MONSTER_GRUNT.get(), EntityMagmaMonsterGrunt.createAttributes().build());
     }
 
-	private static ResourceLocation getEntityResource(String entityName) {
-		return new ResourceLocation(Reference.MOD_ID, entityName);
+	private static String prefix(String name) {
+		return MagmaMonsters.prefix(name).toString();
 	}
 
 	public static DeferredRegister<EntityType<?>> getEntityTypes() {

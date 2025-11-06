@@ -6,7 +6,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
 
-import magma_monsters.Reference;
+import magma_monsters.MagmaMonsters;
 import magma_monsters.client.model.entity.ModelMagmaMonsterGrunt;
 import magma_monsters.entities.EntityMagmaMonsterGrunt;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -23,13 +23,13 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class LayerMagmaMonsterGrunt extends RenderLayer<EntityMagmaMonsterGrunt, ModelMagmaMonsterGrunt<EntityMagmaMonsterGrunt>> {
-    private static final ResourceLocation LIGHTING_TEXTURE = new ResourceLocation("magma_monsters:textures/entity/magma_monster_flow.png");
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(Reference.MOD_ID, "modelmagmamonstergrunt"), "flow");
+    private static final ResourceLocation LIGHTING_TEXTURE = MagmaMonsters.prefix("textures/entity/magma_monster_flow.png");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(MagmaMonsters.prefix("modelmagmamonstergrunt"), "flow");
     private final ModelMagmaMonsterGrunt<EntityMagmaMonsterGrunt> monsterModel;
 
     public LayerMagmaMonsterGrunt(RenderLayerParent<EntityMagmaMonsterGrunt, ModelMagmaMonsterGrunt<EntityMagmaMonsterGrunt>> entity, EntityModelSet modelSet) {
@@ -54,7 +54,8 @@ public class LayerMagmaMonsterGrunt extends RenderLayer<EntityMagmaMonsterGrunt,
 		monsterModel.leftTuskEnd.visible = false;
 		monsterModel.prepareMobModel(entity, limbSwing, limbSwingAmount, partialTicks);
 		monsterModel.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-		monsterModel.renderToBuffer(matrix, buffer.getBuffer(getLavaOverlay(LIGHTING_TEXTURE, 0, -f * 0.004F)), packedLight, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, (float)entity.getMoltenTimer() * 0.02F);
+		//monsterModel.renderToBuffer(matrix, buffer.getBuffer(getLavaOverlay(LIGHTING_TEXTURE, 0, -f * 0.004F)), packedLight, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, (float)entity.getMoltenTimer() * 0.02F);
+		monsterModel.renderToBuffer(matrix, buffer.getBuffer(getLavaOverlay(LIGHTING_TEXTURE, 0, -f * 0.004F)), packedLight, OverlayTexture.NO_OVERLAY);
 	}
 
 	public static RenderType getLavaOverlay(ResourceLocation locationIn, float uIn, float vIn) {
