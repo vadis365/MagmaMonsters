@@ -29,7 +29,7 @@ public class ModEntities {
 	public static final RegistryObject<EntityType<EntityMagmaMonsterGrunt>> MAGMA_MONSTER_GRUNT = getEntityTypes().register("magma_monster_grunt", () -> EntityType.Builder.of(EntityMagmaMonsterGrunt::new, MobCategory.MONSTER).fireImmune().sized(0.5F, 0.9F).build(getEntityResource("magma_monster_grunt").toString()));
 	public static final RegistryObject<Item> MAGMA_MONSTER_SPAWN_EGG = getItems().register("magma_monster_spawn_egg",  () -> new ForgeSpawnEggItem(()-> MAGMA_MONSTER.get(), 0xFF0000, 0x06B900, new Item.Properties()));
 	public static final RegistryObject<Item> MAGMA_MONSTER_GRUNT_SPAWN_EGG = getItems().register("magma_monster_grunt_spawn_egg",  () -> new ForgeSpawnEggItem(()-> MAGMA_MONSTER_GRUNT.get(), 0xFF0000, 0x06B900, new Item.Properties()));
-	public static final RegistryObject<CreativeModeTab> UPPERS_TAB = TAB.register(Reference.MOD_ID, () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.magma_monsters")).icon(Items.FIRE_CHARGE::getDefaultInstance).displayItems((params, output) -> {
+	public static final RegistryObject<CreativeModeTab> MAGMA_MONSTER_TAB = TAB.register(Reference.MOD_ID, () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.magma_monsters")).icon(Items.FIRE_CHARGE::getDefaultInstance).displayItems((params, output) -> {
 				output.accept(MAGMA_MONSTER_SPAWN_EGG.get());
 				output.accept(MAGMA_MONSTER_GRUNT_SPAWN_EGG.get());
 			})
