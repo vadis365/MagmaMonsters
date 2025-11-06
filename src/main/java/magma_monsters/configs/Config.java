@@ -74,14 +74,14 @@ public class Config {
 
     public static void loadConfig(ModConfigSpec spec, Path path) {
   
-        final CommentedFileConfig configData = CommentedFileConfig.builder(path)
+        final @Nullable CommentedFileConfig configData = CommentedFileConfig.builder(path)
                 .sync()
                 .autosave()
                 .writingMode(WritingMode.REPLACE)
                 .build();
 
         configData.load();
-        spec.save();
+       // spec.acceptConfig(configData);
     }
 }
 

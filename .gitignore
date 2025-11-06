@@ -7,3 +7,9 @@ gradle/
 .project
 logs/debug.log
 logs/latest.log
+*.gz
+*.log
+*.log
+*.dat
+*.mca
+*.dat_old

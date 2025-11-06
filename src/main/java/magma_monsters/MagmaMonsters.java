@@ -25,6 +25,8 @@ public class MagmaMonsters {
 		ModEntities.getItems().register(modBus);
 		ModEntities.getTab().register(modBus);
 		ModSounds.getSounds().register(modBus);
+		modBus.addListener(ModEntities::registerSpawnPlacements);
+		modBus.addListener(ModEntities::initializeAttributes);
 		modBus.addListener(MagmaMonstersNetwork::register);
 		if (FMLEnvironment.dist.isClient()) {
 			modBus.addListener(ModRendering::registerEntityLayers);
