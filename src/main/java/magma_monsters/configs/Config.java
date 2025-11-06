@@ -81,7 +81,7 @@ public class Config {
                 .build();
 
         configData.load();
-        //spec.acceptConfig((@Nullable ILoadedConfig) configData);
+        spec.save();
     }
 }
 
