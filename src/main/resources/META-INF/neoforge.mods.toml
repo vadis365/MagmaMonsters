@@ -1,20 +1,20 @@
 modLoader="javafml"
-loaderVersion="[44,)"
+loaderVersion="[4,)"
 license="All rights reserved"
 issueTrackerURL="https://github.com/vadis365/MagmaMonsters/issues"
-displayURL="https://github.com/vadis365/MagmaMonsters"
+
 [[mods]] #mandatory
 modId="magma_monsters"
-version="1.0.0"
-displayName="MagmaMonsters"
+version="2.0.0"
+displayName="Magma Monsters"
+displayURL="https://github.com/vadis365/MagmaMonsters"
 credits="Thanks to Shin00w for creepy sounds."
 authors="vadis365"
 description='''
-A Mod that adds some Magma Monsters.
-'''
+A Mod that adds some Magma Monsters.'''
 [[dependencies.magma_monsters]]
-modId="forge"
-mandatory=true
-versionRange="[1.20.1,)"
+modId="neoforge"
+required=true
+versionRange="[21.1.0,)"
 ordering="NONE"
 side="BOTH"

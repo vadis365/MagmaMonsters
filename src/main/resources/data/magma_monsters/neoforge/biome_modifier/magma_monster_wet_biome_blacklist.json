@@ -1,5 +1,5 @@
 {
-  "type": "forge:remove_spawns",
-  "biomes": "#forge:is_water", 
+  "type": "neoforge:remove_spawns",
+  "biomes": "#neoforge:is_water", 
   "entity_types": ["magma_monsters:magma_monster", "magma_monsters:magma_monster_grunt"]
 }
