@@ -23,6 +23,7 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -54,17 +55,17 @@ public class LayerMagmaMonster extends RenderLayer<EntityMagmaMonster, ModelMagm
 		monsterModel.leftTuskEnd.visible = false;
 		monsterModel.prepareMobModel(entity, limbSwing, limbSwingAmount, partialTicks);
 		monsterModel.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-		//monsterModel.renderToBuffer(matrix, buffer.getBuffer(getLavaOverlay(LIGHTING_TEXTURE, 0, -f * 0.004F)), packedLight, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, (float)entity.getMoltenTimer() * 0.02F);
-		monsterModel.renderToBuffer(matrix, buffer.getBuffer(getLavaOverlay(LIGHTING_TEXTURE, 0, -f * 0.004F)), packedLight, OverlayTexture.NO_OVERLAY);
-	}
+		monsterModel.renderToBuffer(matrix, buffer.getBuffer(getLavaOverlay(LIGHTING_TEXTURE, 0, -f * 0.004F, entity)), packedLight, OverlayTexture.NO_OVERLAY, FastColor.ARGB32.colorFromFloat((float)entity.getMoltenTimer() * 0.02F, 1.0F, 1.0F, 1.0F));
+    }
 
-	public static RenderType getLavaOverlay(ResourceLocation locationIn, float uIn, float vIn) {
-		RenderType.CompositeState renderTypeState = RenderType.CompositeState.builder().setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeEnergySwirlShader)).setTextureState(new RenderStateShard.TextureStateShard(locationIn, false, false)).setTexturingState(new RenderStateShard.OffsetTexturingStateShard(uIn, vIn)).setTransparencyState(new TransparencyStateShard("translucent_transparency", () -> {
-		      RenderSystem.enableBlend();
+	public static RenderType getLavaOverlay(ResourceLocation locationIn, float uIn, float vIn, EntityMagmaMonster entity) {
+		RenderType.CompositeState renderTypeState = RenderType.CompositeState.builder().setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeEnergySwirlShader)).setTextureState(new RenderStateShard.TextureStateShard(locationIn, false, false)).setTexturingState(new RenderStateShard.OffsetTexturingStateShard(uIn, vIn)).setTransparencyState(new TransparencyStateShard("translucent_transparency", () -> {  
+			  RenderSystem.enableBlend();
 		      RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 		   }, () -> {
 		      RenderSystem.disableBlend();
 		      RenderSystem.defaultBlendFunc();
+		      
 		   })).setLightmapState(new LightmapStateShard(true)).setCullState(new CullStateShard(false)).setLightmapState(new LightmapStateShard(false)).setOverlayState(new OverlayStateShard(true)).createCompositeState(false);
 		
 		return RenderType.create("lava_overlay", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true, renderTypeState);

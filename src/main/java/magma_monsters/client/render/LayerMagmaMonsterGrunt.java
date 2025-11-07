@@ -23,6 +23,7 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -54,8 +55,7 @@ public class LayerMagmaMonsterGrunt extends RenderLayer<EntityMagmaMonsterGrunt,
 		monsterModel.leftTuskEnd.visible = false;
 		monsterModel.prepareMobModel(entity, limbSwing, limbSwingAmount, partialTicks);
 		monsterModel.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-		//monsterModel.renderToBuffer(matrix, buffer.getBuffer(getLavaOverlay(LIGHTING_TEXTURE, 0, -f * 0.004F)), packedLight, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, (float)entity.getMoltenTimer() * 0.02F);
-		monsterModel.renderToBuffer(matrix, buffer.getBuffer(getLavaOverlay(LIGHTING_TEXTURE, 0, -f * 0.004F)), packedLight, OverlayTexture.NO_OVERLAY);
+		monsterModel.renderToBuffer(matrix, buffer.getBuffer(getLavaOverlay(LIGHTING_TEXTURE, 0, -f * 0.004F)), packedLight, OverlayTexture.NO_OVERLAY, FastColor.ARGB32.colorFromFloat((float)entity.getMoltenTimer() * 0.02F, 1.0F, 1.0F, 1.0F));
 	}
 
 	public static RenderType getLavaOverlay(ResourceLocation locationIn, float uIn, float vIn) {

@@ -41,10 +41,13 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.SmallFireball;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseFireBlock;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
@@ -165,18 +168,17 @@ public class EntityMagmaMonster extends Monster {
 	protected SoundEvent getDeathSound() {
 		return ModSounds.MAGMA_MONSTER_DEATH.get();
 	}
-/*
-	@SuppressWarnings("deprecation")
+
 	@Override
-	protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHitIn) {
-		int randomAmount = 1 + random.nextInt(2 + looting);
+	protected void dropCustomDeathLoot(ServerLevel level, DamageSource damageSource, boolean recentlyHit) {
+		int randomAmount = 1 + random.nextInt(3);
 		for (int count = 0; count < randomAmount; ++count)
 			if(getMolten())
 				spawnAtLocation(new ItemStack(random.nextBoolean() ? Items.BLAZE_POWDER : Items.MAGMA_CREAM), 0F);
 			else
-				spawnAtLocation(new ItemStack(Item.byBlock(Blocks.OBSIDIAN)), 0F);
+				spawnAtLocation(new ItemStack(Blocks.OBSIDIAN), 0F);
 	}
-*/
+
 	@Override
 	public void tick() {
 		super.tick();
