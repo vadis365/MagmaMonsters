@@ -17,9 +17,9 @@ import net.neoforged.fml.loading.FMLPaths;
 public class MagmaMonsters {
 
 	public MagmaMonsters (IEventBus modBus) {
-		ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
-		Path path = FMLPaths.CONFIGDIR.get().resolve("magma_monsters-common.toml");
-		Config.loadConfig(Config.COMMON_CONFIG, path);
+		ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.STARTUP, Config.STARTUP_CONFIG);
+		Path path = FMLPaths.CONFIGDIR.get().resolve("magma_monsters-startup.toml");
+		Config.loadConfig(Config.STARTUP_CONFIG, path);
 
 		ModEntities.getEntityTypes().register(modBus);
 		ModEntities.getItems().register(modBus);
@@ -27,7 +27,6 @@ public class MagmaMonsters {
 		ModSounds.getSounds().register(modBus);
 		modBus.addListener(ModEntities::registerSpawnPlacements);
 		modBus.addListener(ModEntities::initializeAttributes);
-		//modBus.addListener(ModEntities::changeAttributes);
 		modBus.addListener(MagmaMonstersNetwork::register);
 		if (FMLEnvironment.dist.isClient()) {
 			modBus.addListener(ModRendering::registerEntityLayers);

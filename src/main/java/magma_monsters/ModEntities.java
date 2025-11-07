@@ -45,13 +45,6 @@ public class ModEntities {
     	event.put(ModEntities.MAGMA_MONSTER.get(), EntityMagmaMonster.createAttributes().build());
     	event.put(ModEntities.MAGMA_MONSTER_GRUNT.get(), EntityMagmaMonsterGrunt.createAttributes().build());
     }
-	
-	public static void changeAttributes(EntityAttributeModificationEvent event) {
-		event.add(ModEntities.MAGMA_MONSTER.get(), Attributes.MAX_HEALTH, Config.MAGMA_MONSTER_HEALTH.get());
-		event.add(ModEntities.MAGMA_MONSTER.get(), Attributes.ATTACK_DAMAGE, Config.MAGMA_MONSTER_ATTACK_DAMAGE.get());
-		event.add(ModEntities.MAGMA_MONSTER.get(), Attributes.MAX_HEALTH, Config.MAGMA_MONSTER_GRUNT_HEALTH.get());
-		event.add(ModEntities.MAGMA_MONSTER.get(), Attributes.ATTACK_DAMAGE, Config.MAGMA_MONSTER_GRUNT_ATTACK_DAMAGE.get());
-    }
 
 	private static String prefix(String name) {
 		return MagmaMonsters.prefix(name).toString();

@@ -115,10 +115,10 @@ public class EntityMagmaMonsterGrunt extends Monster {
 	}
 
 	public static AttributeSupplier.Builder createAttributes() {
-		return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 15D/* Config.MAGMA_MONSTER_GRUNT_HEALTH.get()*/)
+		return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, Config.MAGMA_MONSTER_GRUNT_HEALTH.get())
 				.add(Attributes.FOLLOW_RANGE, 32D)
 				.add(Attributes.MOVEMENT_SPEED, 0.25D)
-				.add(Attributes.ATTACK_DAMAGE, 2D /*Config.MAGMA_MONSTER_GRUNT_ATTACK_DAMAGE.get()*/);
+				.add(Attributes.ATTACK_DAMAGE, Config.MAGMA_MONSTER_GRUNT_ATTACK_DAMAGE.get());
 	}
 
 	public static boolean canSpawnHere(EntityType<EntityMagmaMonsterGrunt> entity, LevelAccessor level, MobSpawnType spawn_reason, BlockPos pos, RandomSource random) {
