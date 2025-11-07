@@ -1,6 +1,7 @@
 package magma_monsters;
 import java.util.function.Supplier;
 
+import magma_monsters.configs.Config;
 import magma_monsters.entities.EntityMagmaMonster;
 import magma_monsters.entities.EntityMagmaMonsterGrunt;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -9,12 +10,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacementTypes;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
+import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -41,6 +44,13 @@ public class ModEntities {
 	public static void initializeAttributes(EntityAttributeCreationEvent event) {
     	event.put(ModEntities.MAGMA_MONSTER.get(), EntityMagmaMonster.createAttributes().build());
     	event.put(ModEntities.MAGMA_MONSTER_GRUNT.get(), EntityMagmaMonsterGrunt.createAttributes().build());
+    }
+	
+	public static void changeAttributes(EntityAttributeModificationEvent event) {
+		event.add(ModEntities.MAGMA_MONSTER.get(), Attributes.MAX_HEALTH, Config.MAGMA_MONSTER_HEALTH.get());
+		event.add(ModEntities.MAGMA_MONSTER.get(), Attributes.ATTACK_DAMAGE, Config.MAGMA_MONSTER_ATTACK_DAMAGE.get());
+		event.add(ModEntities.MAGMA_MONSTER.get(), Attributes.MAX_HEALTH, Config.MAGMA_MONSTER_GRUNT_HEALTH.get());
+		event.add(ModEntities.MAGMA_MONSTER.get(), Attributes.ATTACK_DAMAGE, Config.MAGMA_MONSTER_GRUNT_ATTACK_DAMAGE.get());
     }
 
 	private static String prefix(String name) {

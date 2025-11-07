@@ -5,11 +5,13 @@ bin/
 gradle/
 .classpath
 .project
-logs/debug.log
-logs/latest.log
+logs/
 *.gz
 *.log
 *.log
 *.dat
 *.mca
 *.dat_old
+*.launch
+*.prefs
+run/
