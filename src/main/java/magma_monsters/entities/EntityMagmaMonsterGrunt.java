@@ -176,7 +176,7 @@ public class EntityMagmaMonsterGrunt extends Monster {
 
 	@Override
 	protected void dropCustomDeathLoot(ServerLevel level, DamageSource damageSource, boolean recentlyHit) {
-		int randomAmount = 1 + random.nextInt(3);
+		int randomAmount = 1 + random.nextInt(2);
 		for (int count = 0; count < randomAmount; ++count)
 			if(getMolten())
 				spawnAtLocation(new ItemStack(Items.MAGMA_CREAM), 0F);
@@ -184,7 +184,6 @@ public class EntityMagmaMonsterGrunt extends Monster {
 				spawnAtLocation(new ItemStack(Blocks.COBBLESTONE), 0F);
 	}
 
-	@SuppressWarnings("resource")
 	@Override
 	public void tick() {
 		super.tick();
